@@ -173,7 +173,7 @@
             downloadPaymentsCsv: 'Download Payments (CSV)',
             downloadAllDataJson: 'Download All Data (JSON Backup)',
             last5PaymentsFor: 'Last 5 Payments for',
-            via: 'via',
+            via: 'عبر',
           },
           ar: {
             appName: 'تطبيق المتجر',
@@ -316,7 +316,7 @@
                         appId: "1:734860701348:web:b68312f0748d3970c00031",
                         measurementId: "G-CJ95TXTD9D"
                     };
-                    const currentAppId = typeof __app_id !== 'undefined' ? __app_id : 'afg-3006-01';
+                    const currentAppId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId; // Use projectId from config as appId
                     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
                     if (!firebaseConfig) {
@@ -333,6 +333,8 @@
                     setAuth(firebaseAuth);
                     setAppId(currentAppId);
 
+                    console.log("Firebase initialized successfully!"); // Debugging log
+
                     // Sign in with custom token or anonymously
                     if (initialAuthToken) {
                         await firebase.signInWithCustomToken(firebaseAuth, initialAuthToken);
@@ -343,10 +345,14 @@
                     firebase.onAuthStateChanged(firebaseAuth, (user) => {
                         if (user) {
                             setUserId(user.uid);
+                            console.log("User authenticated:", user.uid); // Debugging log
                         } else {
                             // If user logs out or token expires, sign in anonymously
                             firebase.signInAnonymously(firebaseAuth).then(anonUser => {
                                 setUserId(anonUser.user.uid);
+                                console.log("Signed in anonymously:", anonUser.user.uid); // Debugging log
+                            }).catch(anonError => {
+                                console.error("Error signing in anonymously:", anonError); // Debugging log
                             });
                         }
                         setLoading(false); // Auth state is ready
@@ -354,7 +360,7 @@
 
                 } catch (error) {
                     console.error("Error initializing Firebase:", error);
-                    setLoginError("Failed to initialize app. Please try again later.");
+                    setLoginError("Failed to initialize app. Please try again later. Check console for details.");
                     setLoading(false);
                 }
             };
@@ -366,12 +372,14 @@
             if (!db || !userId) return; // Wait for db and userId to be ready
 
             const publicDataPath = `artifacts/${appId}/public/data`;
+            console.log("Listening to Firestore path:", publicDataPath); // Debugging log
 
             // Listen for branches
             const branchesQuery = firebase.query(firebase.collection(db, `${publicDataPath}/branches`));
             const unsubscribeBranches = firebase.onSnapshot(branchesQuery, (snapshot) => {
                 const fetchedBranches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setBranches(fetchedBranches);
+                console.log("Fetched branches:", fetchedBranches); // Debugging log
             }, (error) => console.error("Error fetching branches:", error));
 
             // Listen for users
@@ -383,6 +391,7 @@
                 if (currentUser && fetchedUsers.some(u => u.id === currentUser.id)) {
                     setCurrentUser(fetchedUsers.find(u => u.id === currentUser.id));
                 }
+                console.log("Fetched users:", fetchedUsers); // Debugging log
             }, (error) => console.error("Error fetching users:", error));
 
             // Listen for payments
@@ -394,6 +403,7 @@
                     timestamp: doc.data().timestamp ? new Date(doc.data().timestamp.toDate()) : null // Convert Firestore Timestamp to Date object
                 }));
                 setPayments(fetchedPayments);
+                console.log("Fetched payments:", fetchedPayments); // Debugging log
             }, (error) => console.error("Error fetching payments:", error));
 
             // Cleanup listeners on unmount
