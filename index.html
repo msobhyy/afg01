@@ -16,7 +16,27 @@
         #root {
             min-height: 100vh;
         }
+        /* Custom styles for pagination buttons */
+        .pagination-button {
+            @apply px-4 py-2 rounded-lg font-semibold transition duration-300 shadow-md;
+        }
+        .pagination-button.active {
+            @apply bg-blue-600 text-white hover:bg-blue-700;
+        }
+        .pagination-button.inactive {
+            @apply bg-gray-200 text-gray-700 hover:bg-gray-300;
+        }
+        .pagination-button:disabled {
+            @apply opacity-50 cursor-not-allowed;
+        }
+        /* Styles for larger payment method icons */
+        .payment-method-icon {
+            font-size: 2.5rem; /* Larger icon size */
+            line-height: 1;
+        }
     </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div id="root"></div>
@@ -30,7 +50,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, query, onSnapshot, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, query, onSnapshot, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Expose Firebase functions globally for the Babel script
         window.firebase = {
@@ -49,7 +69,9 @@
             setDoc,
             updateDoc,
             deleteDoc,
-            serverTimestamp
+            serverTimestamp,
+            getDocs,
+            where
         };
     </script>
 
@@ -72,10 +94,10 @@
             userId: 'User ID:',
             logout: 'Logout',
             loginWelcome: 'Welcome! Please Log In',
-            emailPlaceholder: 'Email (e.g., admin@example.com)',
+            emailPlaceholder: 'Email or Employee ID',
             passwordPlaceholder: 'Password (any for demo)',
             loginButton: 'Login',
-            loginError: 'Invalid email or password.',
+            loginError: 'Invalid email/employee ID or password.',
             tryLoginWith: 'Try logging in with:',
             admin: 'Admin',
             supervisor: 'Supervisor',
@@ -125,6 +147,7 @@
             selectBranch: 'Select Branch',
             targetAmountSar: 'Target Amount (SAR)',
             employeeNumber: 'Employee Number',
+            imageUrl: 'Image URL',
             editUserModalTitle: 'Edit User',
             editPaymentModalTitle: 'Edit Payment (Serial No:',
             paymentAmountSar: 'Amount (SAR)',
@@ -134,6 +157,7 @@
             bankTransfer: 'Bank Transfer',
             masterCard: 'MasterCard',
             applePay: 'Apple Pay',
+            madaPay: 'Mada Pay', // New payment method
             supervisorDashboard: 'Supervisor Dashboard',
             addEmployeePayment: 'Add Employee Payment',
             selectEmployee: '1. Select Employee',
@@ -170,10 +194,50 @@
             amountEntryCancelled: 'Amount entry cancelled.',
             paymentAddedSuccessfully: 'Payment added successfully!',
             errorEmployeeOrPaymentMethodMissing: 'Error: Employee or payment method missing. Please restart the process.',
-            downloadPaymentsCsv: 'Download Payments (CSV)',
-            downloadAllDataJson: 'Download All Data (JSON Backup)',
+            downloadPaymentsXLSX: 'Download Payments (XLSX)',
+            downloadAllDataXLSX: 'Download All Data (XLSX Backup)',
             last5PaymentsFor: 'Last 5 Payments for',
-            via: 'عبر',
+            via: 'via',
+            search: 'Search',
+            sort: 'Sort by',
+            newestToOldest: 'Newest to Oldest',
+            oldestToNewest: 'Oldest to Newest',
+            itemsPerPage: 'Items per page:',
+            previous: 'Previous',
+            next: 'Next',
+            downloadFilteredXLSX: 'Download Filtered (XLSX)',
+            all: 'All',
+            selectBranchFilter: 'Select Branch',
+            selectEmployeeFilter: 'Select Employee',
+            selectPaymentMethodFilter: 'Select Payment Method',
+            filter: 'Filter',
+            clearFilters: 'Clear Filters',
+            backToDashboard: 'Back to Dashboard',
+            paymentMethodsManagement: 'Payment Methods Management',
+            addPaymentMethod: 'Add New Payment Method',
+            icon: 'Icon',
+            color: 'Color',
+            addPaymentMethodModalTitle: 'Add New Payment Method',
+            editPaymentMethodModalTitle: 'Edit Payment Method',
+            methodNamePlaceholder: 'e.g., Cash',
+            methodNameArPlaceholder: 'e.g., نقدًا',
+            methodIconPlaceholder: 'e.g., 💰',
+            methodColorPlaceholder: 'e.g., bg-green-500',
+            confirmDeletePaymentMethod: 'Are you sure you want to delete this payment method?',
+            paymentMethodAddedSuccessfully: 'Payment method added successfully!',
+            paymentMethodUpdatedSuccessfully: 'Payment method updated successfully!',
+            paymentMethodDeletedSuccessfully: 'Payment method deleted successfully!',
+            pleaseEnterMethodName: 'Please enter method name.',
+            fromDate: 'From Date',
+            toDate: 'To Date',
+            filterByYear: 'Filter by Year',
+            filterByMonth: 'Filter by Month',
+            filterByDay: 'Filter by Day',
+            selectYear: 'Select Year',
+            selectMonth: 'Select Month',
+            selectDay: 'Select Day',
+            jan: 'January', feb: 'February', mar: 'March', apr: 'April', may: 'May', jun: 'June',
+            jul: 'July', aug: 'August', sep: 'September', oct: 'October', nov: 'November', dec: 'December',
           },
           ar: {
             appName: 'تطبيق المتجر',
@@ -181,10 +245,10 @@
             userId: 'معرف المستخدم:',
             logout: 'تسجيل الخروج',
             loginWelcome: 'أهلاً بك! الرجاء تسجيل الدخول',
-            emailPlaceholder: 'البريد الإلكتروني (مثال: admin@example.com)',
+            emailPlaceholder: 'البريد الإلكتروني أو رقم الموظف',
             passwordPlaceholder: 'كلمة المرور (أي شيء للعرض)',
             loginButton: 'تسجيل الدخول',
-            loginError: 'بريد إلكتروني أو كلمة مرور غير صحيحة.',
+            loginError: 'بريد إلكتروني/رقم موظف أو كلمة مرور غير صحيحة.',
             tryLoginWith: 'جرب تسجيل الدخول باستخدام:',
             admin: 'المشرف',
             supervisor: 'المشرف الفرعي',
@@ -234,6 +298,7 @@
             selectBranch: 'اختر الفرع',
             targetAmountSar: 'المبلغ المستهدف (ريال سعودي)',
             employeeNumber: 'رقم الموظف',
+            imageUrl: 'رابط الصورة',
             editUserModalTitle: 'تعديل المستخدم',
             editPaymentModalTitle: 'تعديل الدفع (الرقم التسلسلي:',
             paymentAmountSar: 'المبلغ (ريال سعودي)',
@@ -243,6 +308,7 @@
             bankTransfer: 'تحويل بنكي',
             masterCard: 'ماستركارد',
             applePay: 'آبل باي',
+            madaPay: 'مدى باي', // New payment method
             supervisorDashboard: 'لوحة تحكم المشرف',
             addEmployeePayment: 'إضافة دفعة للموظف',
             selectEmployee: '1. اختر الموظف',
@@ -279,10 +345,50 @@
             amountEntryCancelled: 'تم إلغاء إدخال المبلغ.',
             paymentAddedSuccessfully: 'تمت إضافة الدفع بنجاح!',
             errorEmployeeOrPaymentMethodMissing: 'خطأ: الموظف أو طريقة الدفع مفقودة. الرجاء إعادة العملية.',
-            downloadPaymentsCsv: 'تنزيل المدفوعات (CSV)',
-            downloadAllDataJson: 'تنزيل جميع البيانات (نسخة احتياطية JSON)',
+            downloadPaymentsXLSX: 'تنزيل المدفوعات (XLSX)',
+            downloadAllDataXLSX: 'تنزيل جميع البيانات (نسخة احتياطية XLSX)',
             last5PaymentsFor: 'آخر 5 مدفوعات لـ',
             via: 'عبر',
+            search: 'بحث',
+            sort: 'ترتيب حسب',
+            newestToOldest: 'الأحدث للأقدم',
+            oldestToNewest: 'الأقدم للأحدث',
+            itemsPerPage: 'العناصر لكل صفحة:',
+            previous: 'السابق',
+            next: 'التالي',
+            downloadFilteredXLSX: 'تنزيل المصفاة (XLSX)',
+            all: 'الكل',
+            selectBranchFilter: 'اختر الفرع',
+            selectEmployeeFilter: 'اختر الموظف',
+            selectPaymentMethodFilter: 'اختر طريقة الدفع',
+            filter: 'تصفية',
+            clearFilters: 'مسح الفلاتر',
+            backToDashboard: 'العودة للوحة التحكم',
+            paymentMethodsManagement: 'إدارة طرق الدفع',
+            addPaymentMethod: 'إضافة طريقة دفع جديدة',
+            icon: 'أيقونة',
+            color: 'اللون',
+            addPaymentMethodModalTitle: 'إضافة طريقة دفع جديدة',
+            editPaymentMethodModalTitle: 'تعديل طريقة الدفع',
+            methodNamePlaceholder: 'مثال: نقداً',
+            methodNameArPlaceholder: 'مثال: كاش',
+            methodIconPlaceholder: 'مثال: 💰',
+            methodColorPlaceholder: 'مثال: bg-green-500',
+            confirmDeletePaymentMethod: 'هل أنت متأكد من رغبتك في حذف طريقة الدفع هذه؟',
+            paymentMethodAddedSuccessfully: 'تمت إضافة طريقة الدفع بنجاح!',
+            paymentMethodUpdatedSuccessfully: 'تم تحديث طريقة الدفع بنجاح!',
+            paymentMethodDeletedSuccessfully: 'تم حذف طريقة الدفع بنجاح!',
+            pleaseEnterMethodName: 'الرجاء إدخال اسم طريقة الدفع.',
+            fromDate: 'من تاريخ',
+            toDate: 'إلى تاريخ',
+            filterByYear: 'تصفية حسب السنة',
+            filterByMonth: 'تصفية حسب الشهر',
+            filterByDay: 'تصفية حسب اليوم',
+            selectYear: 'اختر السنة',
+            selectMonth: 'اختر الشهر',
+            selectDay: 'اختر اليوم',
+            jan: 'يناير', feb: 'فبراير', mar: 'مارس', apr: 'أبريل', may: 'مايو', jun: 'يونيو',
+            jul: 'يوليو', aug: 'أغسطس', sep: 'سبتمبر', oct: 'أكتوبر', nov: 'نوفمبر', dec: 'ديسمبر',
           },
         };
 
@@ -294,6 +400,7 @@
           const [users, setUsers] = useState([]); // Initialize as empty, will load from Firestore
           const [branches, setBranches] = useState([]); // Initialize as empty, will load from Firestore
           const [payments, setPayments] = useState([]); // Initialize as empty, will load from Firestore
+          const [paymentMethods, setPaymentMethods] = useState([]); // New state for payment methods
           const [loginError, setLoginError] = useState('');
           const [language, setLanguage] = useState('ar'); // Default to Arabic
           const [loading, setLoading] = useState(true); // Loading state for Firebase init and data fetch
@@ -301,13 +408,24 @@
           const [auth, setAuth] = useState(null);
           const [appId, setAppId] = useState('');
           const [userId, setUserId] = useState(null);
-
+          const [message, setMessage] = useState(''); // Global message state
 
           useEffect(() => {
             const initFirebase = async () => {
+                let configToUse = null;
                 try {
-                    // Access global variables provided by the Canvas environment
-                    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+                    // Attempt to parse __firebase_config from the Canvas environment
+                    if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                        configToUse = JSON.parse(__firebase_config);
+                        console.log("Using Firebase config from Canvas environment.");
+                    }
+                } catch (parseError) {
+                    console.warn("Could not parse __firebase_config from Canvas environment. Falling back to hardcoded config.", parseError);
+                }
+
+                // If parsing failed or __firebase_config was not defined, use the hardcoded config
+                if (!configToUse) {
+                    configToUse = {
                         apiKey: "AIzaSyDazyxOVaF0gJPw9z3KOctXOr8hernzfCg",
                         authDomain: "afg-3006-01.firebaseapp.com",
                         projectId: "afg-3006-01",
@@ -316,16 +434,20 @@
                         appId: "1:734860701348:web:b68312f0748d3970c00031",
                         measurementId: "G-CJ95TXTD9D"
                     };
-                    const currentAppId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId; // Use projectId from config as appId
+                    console.log("Using hardcoded Firebase config.");
+                }
+
+                try {
+                    const currentAppId = typeof __app_id !== 'undefined' ? __app_id : configToUse.projectId;
                     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-                    if (!firebaseConfig) {
-                        console.error("Firebase config not found. Please ensure __firebase_config is defined.");
+                    if (!configToUse) {
+                        console.error("Firebase config is still null after all attempts. Cannot initialize.");
                         setLoading(false);
                         return;
                     }
 
-                    const app = firebase.initializeApp(firebaseConfig);
+                    const app = firebase.initializeApp(configToUse);
                     const firestoreDb = firebase.getFirestore(app);
                     const firebaseAuth = firebase.getAuth(app);
 
@@ -402,21 +524,40 @@
                     ...doc.data(),
                     timestamp: doc.data().timestamp ? new Date(doc.data().timestamp.toDate()) : null // Convert Firestore Timestamp to Date object
                 }));
+                // Sort payments from newest to oldest by default
+                fetchedPayments.sort((a, b) => (b.timestamp?.getTime() || 0) - (a.timestamp?.getTime() || 0));
                 setPayments(fetchedPayments);
                 console.log("Fetched payments:", fetchedPayments); // Debugging log
             }, (error) => console.error("Error fetching payments:", error));
+
+            // Listen for payment methods
+            const paymentMethodsQuery = firebase.query(firebase.collection(db, `${publicDataPath}/paymentMethods`));
+            const unsubscribePaymentMethods = firebase.onSnapshot(paymentMethodsQuery, (snapshot) => {
+                const fetchedPaymentMethods = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setPaymentMethods(fetchedPaymentMethods);
+                console.log("Fetched payment methods:", fetchedPaymentMethods);
+            }, (error) => console.error("Error fetching payment methods:", error));
+
 
             // Cleanup listeners on unmount
             return () => {
                 unsubscribeBranches();
                 unsubscribeUsers();
                 unsubscribePayments();
+                unsubscribePaymentMethods();
             };
           }, [db, userId, appId, currentUser]); // Re-run when db or userId changes
 
           // Simulate user login (now uses fetched users)
-          const handleLogin = (email, password) => {
-            const user = users.find(u => u.email === email);
+          const handleLogin = (identifier, password) => {
+            // Try to find user by email first
+            let user = users.find(u => u.email === identifier);
+
+            // If not found by email, try by employeeNumber
+            if (!user) {
+                user = users.find(u => u.employeeNumber === identifier);
+            }
+
             if (user) {
               setIsLoggedIn(true);
               setCurrentUser(user);
@@ -441,7 +582,7 @@
             }
           };
 
-          // Firestore operations
+          // Firestore operations for Branches
           const addBranch = async (name, location) => {
             try {
               await firebase.addDoc(firebase.collection(db, `artifacts/${appId}/public/data/branches`), {
@@ -496,7 +637,8 @@
             }
           };
 
-          const addUser = async (name, email, role, branchId, targetAmount, employeeNumber) => {
+          // Firestore operations for Users
+          const addUser = async (name, email, role, branchId, targetAmount, employeeNumber, nameAr, imageUrl) => {
             try {
               // Generate a unique employee number if not provided
               const newEmployeeNumber = employeeNumber || (
@@ -507,12 +649,13 @@
 
               await firebase.addDoc(firebase.collection(db, `artifacts/${appId}/public/data/users`), {
                 name,
+                nameAr: nameAr || name, // Store Arabic name, default to English if not provided
                 email,
                 role,
                 branchId: branchId || '',
                 targetAmount: role === 'employee' ? parseFloat(targetAmount) : 0,
                 employeeNumber: newEmployeeNumber,
-                imageUrl: `https://placehold.co/100x100/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${name.substring(0,2).toUpperCase()}`,
+                imageUrl: imageUrl || `https://placehold.co/100x100/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${name.substring(0,2).toUpperCase()}`,
                 createdAt: firebase.serverTimestamp(),
               });
               setMessage(translations.userAddedSuccessfully);
@@ -560,6 +703,7 @@
             }
           };
 
+          // Firestore operations for Payments
           const addPayment = async (branchId, employeeId, amount, paymentMethod, addedBy) => {
             try {
               await firebase.addDoc(firebase.collection(db, `artifacts/${appId}/public/data/payments`), {
@@ -591,6 +735,45 @@
             }
           };
 
+          // Firestore operations for Payment Methods
+          const addPaymentMethod = async (name, nameAr, icon, color) => {
+            try {
+              await firebase.addDoc(firebase.collection(db, `artifacts/${appId}/public/data/paymentMethods`), {
+                name,
+                nameAr: nameAr || name,
+                icon,
+                color,
+                createdAt: firebase.serverTimestamp(),
+              });
+              setMessage(translations.paymentMethodAddedSuccessfully);
+            } catch (e) {
+              console.error("Error adding payment method: ", e);
+              setMessage("Error adding payment method.");
+            }
+          };
+
+          const editPaymentMethod = async (id, updatedMethod) => {
+            try {
+              await firebase.updateDoc(firebase.doc(db, `artifacts/${appId}/public/data/paymentMethods`, id), {
+                ...updatedMethod,
+                updatedAt: firebase.serverTimestamp(),
+              });
+              setMessage(translations.paymentMethodUpdatedSuccessfully);
+            } catch (e) {
+              console.error("Error updating payment method: ", e);
+              setMessage("Error updating payment method.");
+            }
+          };
+
+          const deletePaymentMethod = async (id) => {
+            try {
+              await firebase.deleteDoc(firebase.doc(db, `artifacts/${appId}/public/data/paymentMethods`, id));
+              setMessage(translations.paymentMethodDeletedSuccessfully);
+            } catch (e) {
+              console.error("Error deleting payment method: ", e);
+              setMessage("Error deleting payment method.");
+            }
+          };
 
           if (loading) {
             return (
@@ -607,6 +790,7 @@
               users,
               branches,
               payments,
+              paymentMethods, // Provide payment methods
               handleLogin,
               handleLogout,
               addBranch,
@@ -617,6 +801,9 @@
               editUser,
               addPayment,
               editPayment,
+              addPaymentMethod,
+              editPaymentMethod,
+              deletePaymentMethod,
               setLoginError,
               loginError,
               setUsers, // Allow AuthPrompt to update users if needed
@@ -626,6 +813,8 @@
               translations: translations[language], // Provide current language translations
               appId, // Provide appId to components if needed
               userId, // Provide userId to components if needed
+              message, // Provide global message
+              setMessage, // Provide global message setter
             }}>
               <div className="min-h-screen bg-gray-100 font-inter" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                 {isLoggedIn ? <MainLayout /> : <Login />}
@@ -637,12 +826,12 @@
         // Login Component
         const Login = () => {
           const { handleLogin, loginError, translations } = useAppContext();
-          const [email, setEmail] = useState('');
+          const [identifier, setIdentifier] = useState(''); // Can be email or employee ID
           const [password, setPassword] = useState(''); // Dummy password field
 
           const handleSubmit = (e) => {
             e.preventDefault();
-            handleLogin(email, password);
+            handleLogin(identifier, password);
           };
 
           return (
@@ -652,10 +841,10 @@
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <input
-                      type="email"
+                      type="text" // Changed to text to accommodate employee ID
                       placeholder={translations.emailPlaceholder}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
                       className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                       required
                     />
@@ -697,7 +886,8 @@
 
         // Main Layout component that routes based on user role
         const MainLayout = () => {
-          const { currentUser, handleLogout, language, setLanguage, translations, userId } = useAppContext();
+          const { currentUser, handleLogout, language, setLanguage, translations, userId, message } = useAppContext();
+          const [adminPage, setAdminPage] = useState('analytics'); // 'analytics', 'branches', 'users', 'payments', 'paymentMethods'
 
           if (!currentUser) {
             return <Login />; // Should not happen if isLoggedIn is true
@@ -706,7 +896,7 @@
           const renderDashboard = () => {
             switch (currentUser.role) {
               case 'admin':
-                return <AdminDashboard />;
+                return <AdminDashboard adminPage={adminPage} setAdminPage={setAdminPage} />;
               case 'supervisor':
                 return <SupervisorDashboard />;
               case 'employee':
@@ -748,15 +938,423 @@
                 </div>
               </header>
               <main className="flex-grow p-6">
+                {message && (
+                  <div className={`mb-4 p-3 rounded-lg text-center ${message.includes('successfully') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {message}
+                  </div>
+                )}
                 {renderDashboard()}
               </main>
             </div>
           );
         };
 
+        // Utility function to export data to XLSX (tab-separated for Excel compatibility)
+        const exportToXLSX = (data, columns, fileNamePrefix, translations, getUserDetails, getBranchName, getPaymentMethodDetails) => {
+            if (data.length === 0) {
+              alert(translations.noPaymentsToDownload); // Using alert for simplicity, replace with custom modal
+              return;
+            }
+
+            const headers = columns.map(col => col.header);
+            const xlsxRows = [];
+            xlsxRows.push(headers.join('\t')); // Use tab for separation
+
+            data.forEach(item => {
+                const row = columns.map(col => {
+                    let value = '';
+                    if (col.render) {
+                        // Custom rendering for specific columns
+                        if (col.key === 'employeeId' && getUserDetails) {
+                            value = getUserDetails(item.employeeId);
+                        } else if (col.key === 'addedBy' && getUserDetails) {
+                            value = getUserDetails(item.addedBy);
+                        } else if (col.key === 'branchId' && getBranchName) {
+                            value = getBranchName(item.branchId);
+                        } else if (col.key === 'timestamp') {
+                            value = item.timestamp?.toLocaleString() || '';
+                        } else if (col.key === 'amount') {
+                            value = item.amount?.toFixed(2) || '0.00';
+                        } else if (col.key === 'name') { // For user names
+                            value = `${item.name} / ${item.nameAr || item.name}`;
+                        } else if (col.key === 'paymentMethod' && getPaymentMethodDetails) { // For payment method names
+                            value = getPaymentMethodDetails(item.paymentMethod);
+                        }
+                        else {
+                            value = col.render(item); // Fallback to generic render if specific not found
+                        }
+                    } else {
+                        value = item[col.key];
+                    }
+                    // Ensure string conversion and handle special characters for CSV/XLSX
+                    return `"${String(value).replace(/"/g, '""')}"`;
+                });
+                xlsxRows.push(row.join('\t'));
+            });
+
+            // Prepend UTF-8 BOM for better Excel compatibility with Arabic characters
+            const xlsxString = "\uFEFF" + xlsxRows.join('\n');
+            const blob = new Blob([xlsxString], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0].replace(/-/g, ''); //YYYYMMDD
+            const timeStr = now.toTimeString().split(' ')[0].substring(0, 5).replace(/:/g, ''); // HHMM
+            const fileName = `${fileNamePrefix}_${dateStr}_${timeStr}.xls`; // TableName_YYYYMMDD_HHMM.xls
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert(translations.paymentsDataDownloadedSuccessfully); // Using alert for simplicity, replace with custom modal
+        };
+
+
+        // Table component for reusability
+        const PaginatedTable = ({
+          data,
+          columns,
+          itemsPerPageOptions = [5, 10, 15, 20, 50],
+          initialItemsPerPage = 15,
+          searchPlaceholder,
+          downloadXLSX, // Renamed from downloadCsv
+          translations,
+          getBranchName,
+          getUserDetails,
+          getPaymentMethodDetails, // New prop for payment methods
+          showFilters = false,
+          branches = [],
+          users = [],
+          paymentMethods = [],
+          onFilterChange,
+          currentFilters,
+          clearFilters,
+        }) => {
+          const [searchTerm, setSearchTerm] = useState('');
+          const [sortKey, setSortKey] = useState(null);
+          const [sortDirection, setSortDirection] = useState('desc'); // 'asc' or 'desc'
+          const [currentPage, setCurrentPage] = useState(1);
+          const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
+
+          const filteredData = data.filter(item => {
+            const matchesSearch = Object.values(item).some(value =>
+              String(value).toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            const matchesBranch = showFilters && currentFilters.branchId ? item.branchId === currentFilters.branchId : true;
+            const matchesEmployee = showFilters && currentFilters.employeeId ? item.employeeId === currentFilters.employeeId : true;
+            const matchesPaymentMethod = showFilters && currentFilters.paymentMethod ? item.paymentMethod === currentFilters.paymentMethod : true;
+
+            // Date filtering logic
+            const itemDate = item.timestamp ? new Date(item.timestamp) : null;
+            let matchesDateRange = true;
+            let matchesYear = true;
+            let matchesMonth = true;
+            let matchesDay = true;
+
+            if (itemDate) {
+                if (currentFilters.startDate) {
+                    const start = new Date(currentFilters.startDate);
+                    start.setHours(0, 0, 0, 0); // Normalize to start of day
+                    matchesDateRange = matchesDateRange && (itemDate >= start);
+                }
+                if (currentFilters.endDate) {
+                    const end = new Date(currentFilters.endDate);
+                    end.setHours(23, 59, 59, 999); // Normalize to end of day
+                    matchesDateRange = matchesDateRange && (itemDate <= end);
+                }
+
+                if (currentFilters.filterYear) {
+                    matchesYear = itemDate.getFullYear() === parseInt(currentFilters.filterYear);
+                }
+                if (currentFilters.filterMonth) {
+                    matchesMonth = itemDate.getMonth() === parseInt(currentFilters.filterMonth) - 1; // Month is 0-indexed
+                }
+                if (currentFilters.filterDay) {
+                    matchesDay = itemDate.getDate() === parseInt(currentFilters.filterDay);
+                }
+            }
+
+
+            return matchesSearch && matchesBranch && matchesEmployee && matchesPaymentMethod &&
+                   matchesDateRange && matchesYear && matchesMonth && matchesDay;
+          });
+
+          const sortedData = [...filteredData].sort((a, b) => {
+            if (!sortKey) return 0;
+
+            const aValue = a[sortKey] instanceof Date ? a[sortKey].getTime() : String(a[sortKey]).toLowerCase();
+            const bValue = b[sortKey] instanceof Date ? b[sortKey].getTime() : String(b[sortKey]).toLowerCase();
+
+            if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+            return 0;
+          });
+
+          const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+          const startIndex = (currentPage - 1) * itemsPerPage;
+          const paginatedData = sortedData.slice(startIndex, startIndex + itemsPerPage);
+
+          const handleSort = (key) => {
+            if (sortKey === key) {
+              setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+            } else {
+              setSortKey(key);
+              setSortDirection('desc'); // Default to descending for new sort key
+            }
+          };
+
+          const handlePageChange = (page) => {
+            setCurrentPage(page);
+          };
+
+          const handleItemsPerPageChange = (e) => {
+            setItemsPerPage(Number(e.target.value));
+            setCurrentPage(1); // Reset to first page
+          };
+
+          // Generate years for filter dropdown (e.g., current year and past 5 years)
+          const currentYear = new Date().getFullYear();
+          const years = Array.from({ length: 6 }, (_, i) => currentYear - i); // Current year and past 5 years
+          const months = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: translations[['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'][i]] }));
+          const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
+
+          return (
+            <div className="p-6 bg-white rounded-xl shadow-lg">
+              <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+                <input
+                  type="text"
+                  placeholder={searchPlaceholder || translations.search + '...'}
+                  value={searchTerm}
+                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                  className="w-full md:w-1/3 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                />
+                <div className="flex items-center space-x-2">
+                  <label htmlFor="itemsPerPage" className="text-gray-700 text-sm font-semibold">{translations.itemsPerPage}</label>
+                  <select
+                    id="itemsPerPage"
+                    value={itemsPerPage}
+                    onChange={handleItemsPerPageChange}
+                    className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                  >
+                    {itemsPerPageOptions.map(option => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {showFilters && (
+                <div className="mb-4 p-4 bg-gray-50 rounded-lg shadow-inner grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label htmlFor="filterBranch" className="block text-gray-700 text-sm font-semibold mb-2">{translations.selectBranchFilter}</label>
+                        <select
+                            id="filterBranch"
+                            value={currentFilters.branchId || ''}
+                            onChange={(e) => onFilterChange('branchId', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                        >
+                            <option value="">{translations.all}</option>
+                            {branches.map(branch => (
+                                <option key={branch.id} value={branch.id}>{branch.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="filterEmployee" className="block text-gray-700 text-sm font-semibold mb-2">{translations.selectEmployeeFilter}</label>
+                        <select
+                            id="filterEmployee"
+                            value={currentFilters.employeeId || ''}
+                            onChange={(e) => onFilterChange('employeeId', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                        >
+                            <option value="">{translations.all}</option>
+                            {users.filter(u => u.role === 'employee').map(user => (
+                                <option key={user.id} value={user.id}>{user.name} / {user.nameAr || user.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="filterPaymentMethod" className="block text-gray-700 text-sm font-semibold mb-2">{translations.selectPaymentMethodFilter}</label>
+                        <select
+                            id="filterPaymentMethod"
+                            value={currentFilters.paymentMethod || ''}
+                            onChange={(e) => onFilterChange('paymentMethod', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                        >
+                            <option value="">{translations.all}</option>
+                            {paymentMethods.map(method => (
+                                <option key={method.id} value={method.name}>{method.name} / {method.nameAr || method.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Date Range Filters */}
+                    <div>
+                        <label htmlFor="startDate" className="block text-gray-700 text-sm font-semibold mb-2">{translations.fromDate}</label>
+                        <input
+                            type="date"
+                            id="startDate"
+                            value={currentFilters.startDate || ''}
+                            onChange={(e) => onFilterChange('startDate', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="endDate" className="block text-gray-700 text-sm font-semibold mb-2">{translations.toDate}</label>
+                        <input
+                            type="date"
+                            id="endDate"
+                            value={currentFilters.endDate || ''}
+                            onChange={(e) => onFilterChange('endDate', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                        />
+                    </div>
+
+                    {/* Granular Date Filters */}
+                    <div>
+                        <label htmlFor="filterYear" className="block text-gray-700 text-sm font-semibold mb-2">{translations.filterByYear}</label>
+                        <select
+                            id="filterYear"
+                            value={currentFilters.filterYear || ''}
+                            onChange={(e) => onFilterChange('filterYear', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                        >
+                            <option value="">{translations.selectYear}</option>
+                            {years.map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="filterMonth" className="block text-gray-700 text-sm font-semibold mb-2">{translations.filterByMonth}</label>
+                        <select
+                            id="filterMonth"
+                            value={currentFilters.filterMonth || ''}
+                            onChange={(e) => onFilterChange('filterMonth', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                        >
+                            <option value="">{translations.selectMonth}</option>
+                            {months.map(month => (
+                                <option key={month.value} value={month.value}>{month.label}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="filterDay" className="block text-gray-700 text-sm font-semibold mb-2">{translations.filterByDay}</label>
+                        <select
+                            id="filterDay"
+                            value={currentFilters.filterDay || ''}
+                            onChange={(e) => onFilterChange('filterDay', e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
+                        >
+                            <option value="">{translations.selectDay}</option>
+                            {days.map(day => (
+                                <option key={day} value={day}>{day}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="md:col-span-4 flex justify-end gap-2 mt-2">
+                        <button
+                            onClick={clearFilters}
+                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition duration-300"
+                        >
+                            {translations.clearFilters}
+                        </button>
+                    </div>
+                </div>
+              )}
+
+              <div className="overflow-x-auto rounded-lg border border-gray-200">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      {columns.map((col) => (
+                        <th
+                          key={col.key}
+                          className="py-3 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleSort(col.key)}
+                        >
+                          {col.header}
+                          {sortKey === col.key && (
+                            <span className="ml-2">
+                              {sortDirection === 'asc' ? <i className="fas fa-arrow-up"></i> : <i className="fas fa-arrow-down"></i>}
+                            </span>
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {paginatedData.map((item, index) => (
+                      <tr key={item.id || index} className="hover:bg-gray-50">
+                        {columns.map((col) => (
+                          <td key={col.key} className="py-3 px-4 whitespace-nowrap text-sm text-gray-800">
+                            {col.render ? col.render(item) : item[col.key]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                    {paginatedData.length === 0 && (
+                        <tr>
+                            <td colSpan={columns.length} className="py-4 text-center text-gray-500">
+                                No data available.
+                            </td>
+                        </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center space-x-2 mt-4">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="pagination-button inactive"
+                  >
+                    {translations.previous}
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`pagination-button ${currentPage === page ? 'active' : 'inactive'}`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="pagination-button inactive"
+                  >
+                    {translations.next}
+                  </button>
+                </div>
+              )}
+
+              {/* Download Buttons */}
+              <div className="flex justify-center gap-4 mt-6">
+                <button
+                  onClick={() => downloadXLSX(sortedData)}
+                  className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition duration-300 shadow-md transform hover:scale-105"
+                >
+                  {translations.downloadFilteredXLSX}
+                </button>
+              </div>
+            </div>
+          );
+        };
+
+
         // Admin Dashboard Component
-        const AdminDashboard = () => {
-          const { users, branches, payments, addBranch, deleteBranch, editBranch, addUser, deleteUser, editUser, editPayment, translations } = useAppContext();
+        const AdminDashboard = ({ adminPage, setAdminPage }) => {
+          const { users, branches, payments, paymentMethods, addBranch, deleteBranch, editBranch, addUser, deleteUser, editUser, editPayment, addPaymentMethod, editPaymentMethod, deletePaymentMethod, translations, setMessage } = useAppContext();
           const [showAddBranchModal, setShowAddBranchModal] = useState(false);
           const [showEditBranchModal, setShowEditBranchModal] = useState(false);
           const [currentBranch, setCurrentBranch] = useState(null);
@@ -767,11 +1365,22 @@
           const [showEditUserModal, setShowEditUserModal] = useState(false);
           const [currentUserToEdit, setCurrentUserToEdit] = useState(null);
           const [newUserName, setNewUserName] = useState('');
+          const [newUserNameAr, setNewUserNameAr] = useState(''); // New state for Arabic name
           const [newUserEmail, setNewUserEmail] = useState('');
           const [newUserRole, setNewUserRole] = useState('');
           const [newUserBranchId, setNewUserBranchId] = useState('');
           const [newUserTargetAmount, setNewUserTargetAmount] = useState(0);
           const [newUserEmployeeNumber, setNewUserEmployeeNumber] = useState('');
+          const [newUserImageUrl, setNewUserImageUrl] = useState(''); // New state for image URL
+
+          const [showAddPaymentMethodModal, setShowAddPaymentMethodModal] = useState(false);
+          const [showEditPaymentMethodModal, setShowEditPaymentMethodModal] = useState(false);
+          const [currentPaymentMethod, setCurrentPaymentMethod] = useState(null);
+          const [newMethodName, setNewMethodName] = useState('');
+          const [newMethodNameAr, setNewMethodNameAr] = useState('');
+          const [newMethodIcon, setNewMethodIcon] = useState('');
+          const [newMethodColor, setNewMethodColor] = useState('');
+
 
           const [showEditPaymentModal, setShowEditPaymentModal] = useState(false);
           const [currentPaymentToEdit, setCurrentPaymentToEdit] = useState(null);
@@ -779,7 +1388,35 @@
           const [editedPaymentMethod, setEditedPaymentMethod] = useState('');
           const [editedEmployeeId, setEditedEmployeeId] = useState('');
 
-          const [message, setMessage] = useState('');
+          // Filters for Payments table
+          const [paymentFilters, setPaymentFilters] = useState({
+            branchId: '',
+            employeeId: '',
+            paymentMethod: '',
+            startDate: '',
+            endDate: '',
+            filterYear: '',
+            filterMonth: '',
+            filterDay: '',
+          });
+
+          const handlePaymentFilterChange = (filterKey, value) => {
+            setPaymentFilters(prev => ({ ...prev, [filterKey]: value }));
+          };
+
+          const clearPaymentFilters = () => {
+            setPaymentFilters({
+                branchId: '',
+                employeeId: '',
+                paymentMethod: '',
+                startDate: '',
+                endDate: '',
+                filterYear: '',
+                filterMonth: '',
+                filterDay: '',
+            });
+          };
+
 
           const getBranchName = (branchId) => {
             const branch = branches.find(b => b.id === branchId);
@@ -788,7 +1425,12 @@
 
           const getUserDetails = (userId) => {
             const user = users.find(u => u.id === userId);
-            return user ? `${user.name} (${user.employeeNumber})` : 'N/A';
+            return user ? `${user.name} / ${user.nameAr || user.name} (${user.employeeNumber})` : 'N/A';
+          };
+
+          const getPaymentMethodDetails = (methodName) => {
+            const method = paymentMethods.find(m => m.name === methodName);
+            return method ? `${method.name} / ${method.nameAr || method.name}` : methodName;
           };
 
           const handleAddBranch = () => {
@@ -812,7 +1454,7 @@
           };
 
           const handleDeleteBranch = (id) => {
-            if (window.confirm(translations.confirmDeleteBranch)) {
+            if (confirm(translations.confirmDeleteBranch)) { // Using confirm for simplicity, would replace with custom modal
               deleteBranch(id);
             }
           };
@@ -827,13 +1469,15 @@
               return;
             }
 
-            addUser(newUserName, newUserEmail, newUserRole, newUserBranchId, newUserTargetAmount, newUserEmployeeNumber);
+            addUser(newUserName, newUserEmail, newUserRole, newUserBranchId, newUserTargetAmount, newUserEmployeeNumber, newUserNameAr, newUserImageUrl);
             setNewUserName('');
+            setNewUserNameAr('');
             setNewUserEmail('');
             setNewUserRole('');
             setNewUserBranchId('');
             setNewUserTargetAmount(0);
             setNewUserEmployeeNumber('');
+            setNewUserImageUrl('');
             setShowAddUserModal(false);
           };
 
@@ -851,8 +1495,36 @@
           };
 
           const handleDeleteUser = (id) => {
-            if (window.confirm(translations.confirmDeleteUser)) {
+            if (confirm(translations.confirmDeleteUser)) { // Using confirm for simplicity, would replace with custom modal
               deleteUser(id);
+            }
+          };
+
+          const handleAddPaymentMethod = () => {
+            if (!newMethodName) {
+              setMessage(translations.pleaseEnterMethodName);
+              return;
+            }
+            addPaymentMethod(newMethodName, newMethodNameAr, newMethodIcon, newMethodColor);
+            setNewMethodName('');
+            setNewMethodNameAr('');
+            setNewMethodIcon('');
+            setNewMethodColor('');
+            setShowAddPaymentMethodModal(false);
+          };
+
+          const handleEditPaymentMethod = () => {
+            if (!currentPaymentMethod.name) {
+              setMessage(translations.pleaseEnterMethodName);
+              return;
+            }
+            editPaymentMethod(currentPaymentMethod.id, currentPaymentMethod);
+            setShowEditPaymentMethodModal(false);
+          };
+
+          const handleDeletePaymentMethod = (id) => {
+            if (confirm(translations.confirmDeletePaymentMethod)) {
+              deletePaymentMethod(id);
             }
           };
 
@@ -867,70 +1539,6 @@
               employeeId: editedEmployeeId,
             });
             setShowEditPaymentModal(false);
-          };
-
-          // Function to download payments as CSV
-          const downloadPaymentsAsCsv = () => {
-            if (payments.length === 0) {
-              setMessage(translations.noPaymentsToDownload);
-              return;
-            }
-
-            const headers = [translations.serialNo, translations.branch, translations.employee + ' ' + translations.name, translations.employeeNo, translations.amount, translations.method, translations.timestamp, translations.addedBy];
-            const csvRows = [];
-            csvRows.push(headers.join(',')); // Add headers
-
-            payments.forEach(payment => {
-              const branchName = getBranchName(payment.branchId);
-              const employee = users.find(u => u.id === payment.employeeId);
-              const employeeName = employee ? employee.name : 'N/A';
-              const employeeNumber = employee ? employee.employeeNumber : 'N/A';
-              const addedByUser = users.find(u => u.id === payment.addedBy);
-              const addedByName = addedByUser ? addedByUser.name : 'N/A';
-              const timestamp = payment.timestamp?.toLocaleString();
-
-              csvRows.push([
-                payment.paymentNumber,
-                branchName,
-                employeeName,
-                employeeNumber,
-                payment.amount.toFixed(2),
-                payment.paymentMethod,
-                timestamp,
-                addedByName
-              ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')); // Quote fields and escape double quotes
-            });
-
-            const csvString = csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', 'payments_data.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            setMessage(translations.paymentsDataDownloadedSuccessfully);
-          };
-
-          // Function to download all current data as JSON (simulated backup)
-          const downloadAllDataAsJson = () => {
-            const allData = {
-              branches: branches,
-              users: users,
-              payments: payments.map(p => ({
-                ...p,
-                timestamp: p.timestamp instanceof Date ? p.timestamp.toISOString() : p.timestamp // Convert Date objects to ISO strings for JSON
-              }))
-            };
-            const jsonString = JSON.stringify(allData, null, 2);
-            const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', 'shop_app_backup.json');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            setMessage(translations.allDataBackedUpSuccessfully);
           };
 
           // --- Analytics Calculations ---
@@ -1005,256 +1613,330 @@
           const monthlyPaymentsSummary = getMonthlyPayments();
           const bestEmployeeToday = getBestEmployeeOfTheDay();
 
+          const paymentColumns = [
+            { key: 'paymentNumber', header: translations.serialNo },
+            { key: 'branchId', header: translations.branch, render: (item) => getBranchName(item.branchId) },
+            { key: 'employeeId', header: translations.employee, render: (item) => getUserDetails(item.employeeId) },
+            { key: 'amount', header: translations.amount, render: (item) => `SAR ${item.amount.toFixed(2)}` },
+            { key: 'paymentMethod', header: translations.method, render: (item) => getPaymentMethodDetails(item.paymentMethod) },
+            { key: 'timestamp', header: translations.timestamp, render: (item) => item.timestamp?.toLocaleString() },
+            { key: 'addedBy', header: translations.addedBy, render: (item) => getUserDetails(item.addedBy) },
+            { key: 'actions', header: translations.actions, render: (item) => (
+                <button
+                  onClick={() => {
+                    setCurrentPaymentToEdit({ ...item });
+                    setEditedAmount(item.amount);
+                    setEditedPaymentMethod(item.paymentMethod);
+                    setEditedEmployeeId(item.employeeId);
+                    setShowEditPaymentModal(true);
+                  }}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs hover:bg-yellow-600 transition"
+                >
+                  {translations.edit}
+                </button>
+              )
+            },
+          ];
+
+          const branchColumns = [
+            { key: 'name', header: translations.name },
+            { key: 'location', header: translations.location },
+            { key: 'actions', header: translations.actions, render: (item) => (
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => { setCurrentBranch({ ...item }); setShowEditBranchModal(true); }}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs hover:bg-yellow-600 transition"
+                  >
+                    {translations.edit}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteBranch(item.id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded-md text-xs hover:bg-red-600 transition"
+                  >
+                    {translations.delete}
+                  </button>
+                </div>
+              )
+            },
+          ];
+
+          const userColumns = [
+            { key: 'name', header: translations.name, render: (item) => (
+                <div className="flex items-center">
+                  <img src={item.imageUrl} alt={item.name} className="w-8 h-8 rounded-full object-cover mr-2" onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/CCCCCC/000000?text=${item.name.substring(0,2).toUpperCase()}`; }}/>
+                  <span>{item.name} / {item.nameAr || item.name}</span>
+                </div>
+              )
+            },
+            { key: 'email', header: translations.email },
+            { key: 'role', header: translations.role, render: (item) => (
+                <span className="capitalize">
+                  {item.role === 'admin' ? translations.admin : item.role === 'supervisor' ? translations.supervisor : translations.employeeRole}
+                </span>
+              )
+            },
+            { key: 'branchId', header: translations.branch, render: (item) => getBranchName(item.branchId) },
+            { key: 'targetAmount', header: translations.target, render: (item) => `SAR ${item.targetAmount ? item.targetAmount.toFixed(2) : '0.00'}` },
+            { key: 'employeeNumber', header: translations.employeeNo },
+            { key: 'id', header: translations.userId, render: (item) => <span className="break-all">{item.id}</span> },
+            { key: 'actions', header: translations.actions, render: (item) => (
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => { setCurrentUserToEdit({ ...item }); setShowEditUserModal(true); }}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs hover:bg-yellow-600 transition"
+                  >
+                    {translations.edit}
+                  </button>
+                  <button
+                    onClick={() => handleDeleteUser(item.id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded-md text-xs hover:bg-red-600 transition"
+                  >
+                    {translations.delete}
+                  </button>
+                </div>
+              )
+            },
+          ];
+
+          const paymentMethodColumns = [
+            { key: 'name', header: translations.name, render: (item) => `${item.name} / ${item.nameAr || item.name}` },
+            { key: 'icon', header: translations.icon, render: (item) => <span className="text-xl">{item.icon}</span> },
+            { key: 'color', header: translations.color, render: (item) => <span className={`inline-block w-6 h-6 rounded-full ${item.color}`}></span> },
+            { key: 'actions', header: translations.actions, render: (item) => (
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => { setCurrentPaymentMethod({ ...item }); setShowEditPaymentMethodModal(true); }}
+                    className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs hover:bg-yellow-600 transition"
+                  >
+                    {translations.edit}
+                  </button>
+                  <button
+                    onClick={() => handleDeletePaymentMethod(item.id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded-md text-xs hover:bg-red-600 transition"
+                  >
+                    {translations.delete}
+                  </button>
+                </div>
+              )
+            },
+          ];
+
+
           return (
             <div className="bg-white p-8 rounded-xl shadow-lg">
               <h2 className="text-3xl font-bold text-gray-800 mb-6">{translations.adminDashboard}</h2>
 
-              {message && (
-                <div className={`mb-4 p-3 rounded-lg text-center ${message.includes('successfully') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {message}
+              {/* Navigation Buttons for Admin Dashboard */}
+              <div className="mb-8 p-4 bg-gray-100 rounded-lg shadow-inner flex flex-wrap gap-4 justify-center">
+                <button
+                  onClick={() => setAdminPage('analytics')}
+                  className={`px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-md transform hover:scale-105 ${adminPage === 'analytics' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'}`}
+                >
+                  {translations.analyticsOverview}
+                </button>
+                <button
+                  onClick={() => setAdminPage('branches')}
+                  className={`px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-md transform hover:scale-105 ${adminPage === 'branches' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'}`}
+                >
+                  {translations.branchManagement}
+                </button>
+                <button
+                  onClick={() => setAdminPage('users')}
+                  className={`px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-md transform hover:scale-105 ${adminPage === 'users' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'}`}
+                >
+                  {translations.userManagement}
+                </button>
+                <button
+                  onClick={() => setAdminPage('payments')}
+                  className={`px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-md transform hover:scale-105 ${adminPage === 'payments' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'}`}
+                >
+                  {translations.realtimePayments}
+                </button>
+                <button
+                  onClick={() => setAdminPage('paymentMethods')}
+                  className={`px-6 py-3 rounded-lg font-semibold transition duration-300 shadow-md transform hover:scale-105 ${adminPage === 'paymentMethods' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800 hover:bg-gray-400'}`}
+                >
+                  {translations.paymentMethodsManagement}
+                </button>
+              </div>
+
+              {adminPage === 'analytics' && (
+                <>
+                  {/* Data Management Actions */}
+                  <div className="mb-8 p-6 bg-gray-50 rounded-lg shadow-inner flex flex-wrap gap-4 justify-center">
+                    <button
+                      onClick={() => exportToXLSX(payments, paymentColumns, 'Payments', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
+                      className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition duration-300 shadow-md transform hover:scale-105"
+                    >
+                      {translations.downloadPaymentsXLSX}
+                    </button>
+                    <button
+                      onClick={() => exportToXLSX([...branches, ...users, ...payments, ...paymentMethods], [], 'AllData', translations, getUserDetails, getBranchName, getPaymentMethodDetails)} // Simplified for demo, ideally separate exports
+                      className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 shadow-md transform hover:scale-105"
+                    >
+                      {translations.downloadAllDataXLSX}
+                    </button>
+                  </div>
+
+                  {/* Analytics Section */}
+                  <div className="mb-8 p-6 bg-yellow-50 rounded-lg shadow-inner">
+                    <h3 className="text-2xl font-semibold text-yellow-800 mb-4">{translations.analyticsOverview}</h3>
+                    {bestEmployeeToday && (
+                      <div className="mb-6 p-4 bg-yellow-100 rounded-lg shadow-md text-center">
+                        <h4 className="text-xl font-bold text-yellow-900">{translations.bestEmployeeToday}</h4>
+                        <div className="flex flex-col items-center mt-2">
+                          <img src={bestEmployeeToday.employee.imageUrl} alt={bestEmployeeToday.employee.name} className="w-20 h-20 rounded-full object-cover border-2 border-yellow-500 mb-2" onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/CCCCCC/000000?text=${bestEmployeeToday.employee.name.substring(0,2).toUpperCase()}`; }}/>
+                          <p className="text-lg font-semibold text-yellow-800">{bestEmployeeToday.employee.name} / {bestEmployeeToday.employee.nameAr || bestEmployeeToday.employee.name} ({bestEmployeeToday.employee.employeeNumber})</p>
+                          <p className="text-2xl font-bold text-green-700">SAR {bestEmployeeToday.earnings.toFixed(2)}</p>
+                          <p className="text-sm text-gray-600">{getBranchName(bestEmployeeToday.employee.branchId)}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <h4 className="text-xl font-semibold text-yellow-800 mb-3">{translations.dailyPaymentsSummary}</h4>
+                    {dailyPaymentsSummary.length > 0 ? (
+                      <div className="overflow-x-auto mb-6">
+                        {dailyPaymentsSummary.map(day => (
+                          <div key={day.date} className="mb-4 p-3 bg-yellow-100 rounded-lg shadow-sm">
+                            <h5 className="text-lg font-bold text-yellow-900 mb-2">{translations.date}: {new Date(day.date).toLocaleDateString()}</h5>
+                            {day.branches.map(branch => (
+                              <div key={branch.branchId} className="ml-4 mb-2">
+                                <p className="font-semibold text-gray-700">{translations.branch}: {branch.branchName}</p>
+                                <ul className="list-disc list-inside ml-4">
+                                  {Object.keys(branch.methods).map(method => (
+                                    <li key={method} className="text-sm text-gray-600">
+                                      {getPaymentMethodDetails(method)}: <span className="font-medium text-green-700">SAR {branch.methods[method].toFixed(2)}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600">{translations.noDailyPaymentData}</p>
+                    )}
+
+                    <h4 className="text-xl font-semibold text-yellow-800 mb-3">{translations.monthlyPaymentsSummary}</h4>
+                    {monthlyPaymentsSummary.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        {monthlyPaymentsSummary.map(month => (
+                          <div key={month.month} className="mb-4 p-3 bg-yellow-100 rounded-lg shadow-sm">
+                            <h5 className="text-lg font-bold text-yellow-900 mb-2">{translations.month}: {new Date(month.month + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}</h5>
+                            {month.branches.map(branch => (
+                              <div key={branch.branchId} className="ml-4 mb-2">
+                                <p className="font-semibold text-gray-700">{translations.branch}: {branch.branchName}</p>
+                                <ul className="list-disc list-inside ml-4">
+                                  {Object.keys(branch.methods).map(method => (
+                                    <li key={method} className="text-sm text-gray-600">
+                                      {getPaymentMethodDetails(method)}: <span className="font-medium text-green-700">SAR {branch.methods[method].toFixed(2)}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600">{translations.noMonthlyPaymentData}</p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {adminPage === 'branches' && (
+                <div className="mb-8 p-6 bg-blue-50 rounded-lg shadow-inner">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-2xl font-semibold text-blue-800">{translations.branchManagement}</h3>
+                    <button
+                      onClick={() => { setNewBranchName(''); setNewBranchLocation(''); setShowAddBranchModal(true); }}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 shadow-md"
+                    >
+                      {translations.addBranch}
+                    </button>
+                  </div>
+                  <PaginatedTable
+                    data={branches}
+                    columns={branchColumns}
+                    searchPlaceholder={translations.search + ' ' + translations.branch + '...'}
+                    downloadXLSX={(data) => exportToXLSX(data, branchColumns, 'Branches', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
+                    translations={translations}
+                  />
                 </div>
               )}
 
-              {/* Data Management Actions */}
-              <div className="mb-8 p-6 bg-gray-50 rounded-lg shadow-inner flex flex-wrap gap-4 justify-center">
-                <button
-                  onClick={downloadPaymentsAsCsv}
-                  className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition duration-300 shadow-md transform hover:scale-105"
-                >
-                  {translations.downloadPaymentsCsv}
-                </button>
-                <button
-                  onClick={downloadAllDataAsJson}
-                  className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 shadow-md transform hover:scale-105"
-                >
-                  {translations.downloadAllDataJson}
-                </button>
-              </div>
-
-              {/* Analytics Section */}
-              <div className="mb-8 p-6 bg-yellow-50 rounded-lg shadow-inner">
-                <h3 className="text-2xl font-semibold text-yellow-800 mb-4">{translations.analyticsOverview}</h3>
-                {bestEmployeeToday && (
-                  <div className="mb-6 p-4 bg-yellow-100 rounded-lg shadow-md text-center">
-                    <h4 className="text-xl font-bold text-yellow-900">{translations.bestEmployeeToday}</h4>
-                    <div className="flex flex-col items-center mt-2">
-                      <img src={bestEmployeeToday.employee.imageUrl} alt={bestEmployeeToday.employee.name} className="w-20 h-20 rounded-full object-cover border-2 border-yellow-500 mb-2"/>
-                      <p className="text-lg font-semibold text-yellow-800">{bestEmployeeToday.employee.name} ({bestEmployeeToday.employee.employeeNumber})</p>
-                      <p className="text-2xl font-bold text-green-700">SAR {bestEmployeeToday.earnings.toFixed(2)}</p>
-                      <p className="text-sm text-gray-600">{getBranchName(bestEmployeeToday.employee.branchId)}</p>
-                    </div>
+              {adminPage === 'users' && (
+                <div className="mb-8 p-6 bg-green-50 rounded-lg shadow-inner">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-2xl font-semibold text-green-800">{translations.userManagement}</h3>
+                    <button
+                      onClick={() => {
+                        setNewUserName(''); setNewUserNameAr(''); setNewUserEmail(''); setNewUserRole('');
+                        setNewUserBranchId(''); setNewUserTargetAmount(0); setNewUserEmployeeNumber(''); setNewUserImageUrl('');
+                        setShowAddUserModal(true);
+                      }}
+                      className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-300 shadow-md"
+                    >
+                      {translations.addUser}
+                    </button>
                   </div>
-                )}
+                  <PaginatedTable
+                    data={users}
+                    columns={userColumns}
+                    searchPlaceholder={translations.search + ' ' + translations.employee + '...'}
+                    downloadXLSX={(data) => exportToXLSX(data, userColumns, 'Users', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
+                    translations={translations}
+                    getBranchName={getBranchName}
+                  />
+                </div>
+              )}
 
-                <h4 className="text-xl font-semibold text-yellow-800 mb-3">{translations.dailyPaymentsSummary}</h4>
-                {dailyPaymentsSummary.length > 0 ? (
-                  <div className="overflow-x-auto mb-6">
-                    {dailyPaymentsSummary.map(day => (
-                      <div key={day.date} className="mb-4 p-3 bg-yellow-100 rounded-lg shadow-sm">
-                        <h5 className="text-lg font-bold text-yellow-900 mb-2">{translations.date}: {new Date(day.date).toLocaleDateString()}</h5>
-                        {day.branches.map(branch => (
-                          <div key={branch.branchId} className="ml-4 mb-2">
-                            <p className="font-semibold text-gray-700">{translations.branch}: {branch.branchName}</p>
-                            <ul className="list-disc list-inside ml-4">
-                              {Object.keys(branch.methods).map(method => (
-                                <li key={method} className="text-sm text-gray-600">
-                                  {method}: <span className="font-medium text-green-700">SAR {branch.methods[method].toFixed(2)}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-                    ))}
+              {adminPage === 'payments' && (
+                <div className="p-6 bg-purple-50 rounded-lg shadow-inner">
+                  <h3 className="text-2xl font-semibold text-purple-800 mb-4">{translations.realtimePayments}</h3>
+                  <PaginatedTable
+                    data={payments}
+                    columns={paymentColumns}
+                    searchPlaceholder={translations.search + ' ' + translations.amount + ', ' + translations.method + '...'}
+                    downloadXLSX={(data) => exportToXLSX(data, paymentColumns, 'Payments', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
+                    translations={translations}
+                    getBranchName={getBranchName}
+                    getUserDetails={getUserDetails}
+                    getPaymentMethodDetails={getPaymentMethodDetails}
+                    showFilters={true}
+                    branches={branches}
+                    users={users}
+                    paymentMethods={paymentMethods}
+                    onFilterChange={handlePaymentFilterChange}
+                    currentFilters={paymentFilters}
+                    clearFilters={clearPaymentFilters}
+                  />
+                </div>
+              )}
+
+              {adminPage === 'paymentMethods' && (
+                <div className="mb-8 p-6 bg-orange-50 rounded-lg shadow-inner">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-2xl font-semibold text-orange-800">{translations.paymentMethodsManagement}</h3>
+                    <button
+                      onClick={() => { setNewMethodName(''); setNewMethodNameAr(''); setNewMethodIcon(''); setNewMethodColor(''); setShowAddPaymentMethodModal(true); }}
+                      className="bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-700 transition duration-300 shadow-md"
+                    >
+                      {translations.addPaymentMethod}
+                    </button>
                   </div>
-                ) : (
-                  <p className="text-gray-600">{translations.noDailyPaymentData}</p>
-                )}
-
-                <h4 className="text-xl font-semibold text-yellow-800 mb-3">{translations.monthlyPaymentsSummary}</h4>
-                {monthlyPaymentsSummary.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    {monthlyPaymentsSummary.map(month => (
-                      <div key={month.month} className="mb-4 p-3 bg-yellow-100 rounded-lg shadow-sm">
-                        <h5 className="text-lg font-bold text-yellow-900 mb-2">{translations.month}: {new Date(month.month + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}</h5>
-                        {month.branches.map(branch => (
-                          <div key={branch.branchId} className="ml-4 mb-2">
-                            <p className="font-semibold text-gray-700">{translations.branch}: {branch.branchName}</p>
-                            <ul className="list-disc list-inside ml-4">
-                              {Object.keys(branch.methods).map(method => (
-                                <li key={method} className="text-sm text-gray-600">
-                                  {method}: <span className="font-medium text-green-700">SAR {branch.methods[method].toFixed(2)}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-600">{translations.noMonthlyPaymentData}</p>
-                )}
-              </div>
-
-
-              {/* Branch Management */}
-              <div className="mb-8 p-6 bg-blue-50 rounded-lg shadow-inner">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-2xl font-semibold text-blue-800">{translations.branchManagement}</h3>
-                  <button
-                    onClick={() => { setNewBranchName(''); setNewBranchLocation(''); setShowAddBranchModal(true); }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 shadow-md"
-                  >
-                    {translations.addBranch}
-                  </button>
+                  <PaginatedTable
+                    data={paymentMethods}
+                    columns={paymentMethodColumns}
+                    searchPlaceholder={translations.search + ' ' + translations.paymentMethod + '...'}
+                    downloadXLSX={(data) => exportToXLSX(data, paymentMethodColumns, 'PaymentMethods', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
+                    translations={translations}
+                  />
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white rounded-lg overflow-hidden">
-                    <thead className="bg-blue-100">
-                      <tr>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.name}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.location}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.actions}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {branches.map((branch) => (
-                        <tr key={branch.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
-                          <td className="py-3 px-4 text-sm text-gray-800">{branch.name}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{branch.location}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800 flex space-x-2">
-                            <button
-                              onClick={() => { setCurrentBranch({ ...branch }); setShowEditBranchModal(true); }}
-                              className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs hover:bg-yellow-600 transition"
-                            >
-                              {translations.edit}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteBranch(branch.id)}
-                              className="bg-red-500 text-white px-3 py-1 rounded-md text-xs hover:bg-red-600 transition"
-                            >
-                              {translations.delete}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+              )}
 
-              {/* User Management */}
-              <div className="mb-8 p-6 bg-green-50 rounded-lg shadow-inner">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-2xl font-semibold text-green-800">{translations.userManagement}</h3>
-                  <button
-                    onClick={() => {
-                      setNewUserName(''); setNewUserEmail(''); setNewUserRole('');
-                      setNewUserBranchId(''); setNewUserTargetAmount(0); setNewUserEmployeeNumber('');
-                      setShowAddUserModal(true);
-                    }}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-300 shadow-md"
-                  >
-                    {translations.addUser}
-                  </button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white rounded-lg overflow-hidden">
-                    <thead className="bg-green-100">
-                      <tr>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.name}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.email}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.role}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.branch}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.target}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.employeeNo}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.userId}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.actions}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.map((user) => (
-                        <tr key={user.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
-                          <td className="py-3 px-4 text-sm text-gray-800">{user.name}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{user.email}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800 capitalize">
-                            {user.role === 'admin' ? translations.admin : user.role === 'supervisor' ? translations.supervisor : translations.employeeRole}
-                          </td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{getBranchName(user.branchId)}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">SAR {user.targetAmount ? user.targetAmount.toFixed(2) : '0.00'}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{user.employeeNumber}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800 break-all">{user.id}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800 flex space-x-2">
-                            <button
-                              onClick={() => { setCurrentUserToEdit({ ...user }); setShowEditUserModal(true); }}
-                              className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs hover:bg-yellow-600 transition"
-                            >
-                              {translations.edit}
-                            </button>
-                            <button
-                              onClick={() => handleDeleteUser(user.id)}
-                              className="bg-red-500 text-white px-3 py-1 rounded-md text-xs hover:bg-red-600 transition"
-                            >
-                              {translations.delete}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Real-time Payments View */}
-              <div className="p-6 bg-purple-50 rounded-lg shadow-inner">
-                <h3 className="text-2xl font-semibold text-purple-800 mb-4">{translations.realtimePayments}</h3>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white rounded-lg overflow-hidden">
-                    <thead className="bg-purple-100">
-                      <tr>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.serialNo}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.branch}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.employee}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.amount}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.method}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.timestamp}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.addedBy}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.actions}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {payments.map((payment) => (
-                        <tr key={payment.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
-                          <td className="py-3 px-4 text-sm text-gray-800">{payment.paymentNumber}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{getBranchName(payment.branchId)}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{getUserDetails(payment.employeeId)}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800 font-medium text-green-700">SAR {payment.amount.toFixed(2)}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{payment.paymentMethod}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">
-                            {payment.timestamp?.toLocaleString()}
-                          </td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{getUserDetails(payment.addedBy)}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">
-                            <button
-                              onClick={() => {
-                                setCurrentPaymentToEdit({ ...payment });
-                                setEditedAmount(payment.amount);
-                                setEditedPaymentMethod(payment.paymentMethod);
-                                setEditedEmployeeId(payment.employeeId);
-                                setShowEditPaymentModal(true);
-                              }}
-                              className="bg-yellow-500 text-white px-3 py-1 rounded-md text-xs hover:bg-yellow-600 transition"
-                            >
-                              {translations.edit}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
 
               {/* Add Branch Modal */}
               {showAddBranchModal && (
@@ -1350,7 +2032,7 @@
                   <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
                     <h3 className="text-2xl font-bold mb-6 text-gray-800">{translations.addUserModalTitle}</h3>
                     <div className="mb-4">
-                      <label htmlFor="userName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name}</label>
+                      <label htmlFor="userName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (English)</label>
                       <input
                         type="text"
                         id="userName"
@@ -1358,6 +2040,18 @@
                         onChange={(e) => setNewUserName(e.target.value)}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                         placeholder={translations.userNamePlaceholder}
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="userNameAr" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (Arabic)</label>
+                      <input
+                        type="text"
+                        id="userNameAr"
+                        value={newUserNameAr}
+                        onChange={(e) => setNewUserNameAr(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        placeholder="مثال: سارة محمد"
+                        dir="rtl"
                       />
                     </div>
                     <div className="mb-4">
@@ -1425,6 +2119,17 @@
                             placeholder="e.g., EMP004"
                           />
                         </div>
+                        <div className="mb-6">
+                          <label htmlFor="userImageUrl" className="block text-gray-700 text-sm font-semibold mb-2">{translations.imageUrl}</label>
+                          <input
+                            type="text"
+                            id="userImageUrl"
+                            value={newUserImageUrl}
+                            onChange={(e) => setNewUserImageUrl(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                            placeholder="e.g., https://example.com/image.jpg"
+                          />
+                        </div>
                       </>
                     )}
                     <div className="flex justify-end space-x-3">
@@ -1451,13 +2156,24 @@
                   <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
                     <h3 className="text-2xl font-bold mb-6 text-gray-800">{translations.editUserModalTitle}</h3>
                     <div className="mb-4">
-                      <label htmlFor="editUserName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name}</label>
+                      <label htmlFor="editUserName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (English)</label>
                       <input
                         type="text"
                         id="editUserName"
                         value={currentUserToEdit.name}
                         onChange={(e) => setCurrentUserToEdit({ ...currentUserToEdit, name: e.target.value })}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="editUserNameAr" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (Arabic)</label>
+                      <input
+                        type="text"
+                        id="editUserNameAr"
+                        value={currentUserToEdit.nameAr || ''}
+                        onChange={(e) => setCurrentUserToEdit({ ...currentUserToEdit, nameAr: e.target.value })}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        dir="rtl"
                       />
                     </div>
                     <div className="mb-4">
@@ -1521,6 +2237,16 @@
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                           />
                         </div>
+                        <div className="mb-6">
+                          <label htmlFor="editUserImageUrl" className="block text-gray-700 text-sm font-semibold mb-2">{translations.imageUrl}</label>
+                          <input
+                            type="text"
+                            id="editUserImageUrl"
+                            value={currentUserToEdit.imageUrl || ''}
+                            onChange={(e) => setCurrentUserToEdit({ ...currentUserToEdit, imageUrl: e.target.value })}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                          />
+                        </div>
                       </>
                     )}
                     <div className="flex justify-end space-x-3">
@@ -1533,6 +2259,138 @@
                       <button
                         onClick={handleEditUser}
                         className="px-5 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition duration-300"
+                      >
+                        {translations.saveChanges}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Add Payment Method Modal */}
+              {showAddPaymentMethodModal && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
+                  <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+                    <h3 className="text-2xl font-bold mb-6 text-gray-800">{translations.addPaymentMethodModalTitle}</h3>
+                    <div className="mb-4">
+                      <label htmlFor="methodName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (English)</label>
+                      <input
+                        type="text"
+                        id="methodName"
+                        value={newMethodName}
+                        onChange={(e) => setNewMethodName(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        placeholder={translations.methodNamePlaceholder}
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="methodNameAr" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (Arabic)</label>
+                      <input
+                        type="text"
+                        id="methodNameAr"
+                        value={newMethodNameAr}
+                        onChange={(e) => setNewMethodNameAr(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        placeholder={translations.methodNameArPlaceholder}
+                        dir="rtl"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="methodIcon" className="block text-gray-700 text-sm font-semibold mb-2">{translations.icon}</label>
+                      <input
+                        type="text"
+                        id="methodIcon"
+                        value={newMethodIcon}
+                        onChange={(e) => setNewMethodIcon(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        placeholder={translations.methodIconPlaceholder}
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <label htmlFor="methodColor" className="block text-gray-700 text-sm font-semibold mb-2">{translations.color}</label>
+                      <input
+                        type="text"
+                        id="methodColor"
+                        value={newMethodColor}
+                        onChange={(e) => setNewMethodColor(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        placeholder={translations.methodColorPlaceholder}
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-3">
+                      <button
+                        onClick={() => setShowAddPaymentMethodModal(false)}
+                        className="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition duration-200"
+                      >
+                        {translations.cancel}
+                      </button>
+                      <button
+                        onClick={handleAddPaymentMethod}
+                        className="px-5 py-2 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition duration-300"
+                      >
+                        {translations.addPaymentMethod}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit Payment Method Modal */}
+              {showEditPaymentMethodModal && currentPaymentMethod && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
+                  <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+                    <h3 className="text-2xl font-bold mb-6 text-gray-800">{translations.editPaymentMethodModalTitle}</h3>
+                    <div className="mb-4">
+                      <label htmlFor="editMethodName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (English)</label>
+                      <input
+                        type="text"
+                        id="editMethodName"
+                        value={currentPaymentMethod.name}
+                        onChange={(e) => setCurrentPaymentMethod({ ...currentPaymentMethod, name: e.target.value })}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="editMethodNameAr" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (Arabic)</label>
+                      <input
+                        type="text"
+                        id="editMethodNameAr"
+                        value={currentPaymentMethod.nameAr || ''}
+                        onChange={(e) => setCurrentPaymentMethod({ ...currentPaymentMethod, nameAr: e.target.value })}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                        dir="rtl"
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor="editMethodIcon" className="block text-gray-700 text-sm font-semibold mb-2">{translations.icon}</label>
+                      <input
+                        type="text"
+                        id="editMethodIcon"
+                        value={currentPaymentMethod.icon}
+                        onChange={(e) => setCurrentPaymentMethod({ ...currentPaymentMethod, icon: e.target.value })}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <label htmlFor="editMethodColor" className="block text-gray-700 text-sm font-semibold mb-2">{translations.color}</label>
+                      <input
+                        type="text"
+                        id="editMethodColor"
+                        value={currentPaymentMethod.color}
+                        onChange={(e) => setCurrentPaymentMethod({ ...currentPaymentMethod, color: e.target.value })}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-3">
+                      <button
+                        onClick={() => setShowEditPaymentMethodModal(false)}
+                        className="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition duration-200"
+                      >
+                        {translations.cancel}
+                      </button>
+                      <button
+                        onClick={handleEditPaymentMethod}
+                        className="px-5 py-2 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition duration-300"
                       >
                         {translations.saveChanges}
                       </button>
@@ -1566,11 +2424,9 @@
                         onChange={(e) => setEditedPaymentMethod(e.target.value)}
                         className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                       >
-                        <option value="Cash">{translations.cash}</option>
-                        <option value="Visa">{translations.visa}</option>
-                        <option value="Bank Transfer">{translations.bankTransfer}</option>
-                        <option value="MasterCard">{translations.masterCard}</option>
-                        <option value="Apple Pay">{translations.applePay}</option>
+                        {paymentMethods.map(method => (
+                            <option key={method.id} value={method.name}>{method.name} / {method.nameAr || method.name}</option>
+                        ))}
                       </select>
                     </div>
                     <div className="mb-6">
@@ -1713,8 +2569,9 @@
                 readOnly
                 placeholder={placeholder}
                 className="w-full p-3 mb-4 text-right text-2xl font-bold bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+                dir="ltr" /* Ensure LTR direction for calculator input */
               />
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-2" dir="ltr"> {/* Ensure LTR direction for calculator buttons */}
                 {calculatorButtons.map((btn) => (
                   <button
                     key={btn}
@@ -1754,21 +2611,13 @@
 
         // Supervisor Dashboard Component
         const SupervisorDashboard = () => {
-          const { currentUser, users, payments, addPayment, branches, translations } = useAppContext();
+          const { currentUser, users, payments, addPayment, branches, paymentMethods, translations, setMessage } = useAppContext();
           const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
           const [amount, setAmount] = useState('');
-          const [paymentMethod, setPaymentMethod] = useState('Cash');
-          const [message, setMessage] = useState('');
+          const [paymentMethod, setPaymentMethod] = useState(''); // Default to empty, user must select
           const [currentStep, setCurrentStep] = useState('selectEmployee'); // 'selectEmployee', 'selectPaymentMethod', 'enterAmount'
           const [selectedEmployeeLastPayments, setSelectedEmployeeLastPayments] = useState([]);
 
-          const paymentMethods = [
-            { name: translations.cash, icon: '💰', color: 'bg-green-500' },
-            { name: translations.visa, icon: '💳', color: 'bg-blue-500' },
-            { name: translations.bankTransfer, icon: '🏦', color: 'bg-indigo-500' },
-            { name: translations.masterCard, icon: '💳', color: 'bg-orange-500' },
-            { name: translations.applePay, icon: '🍎', color: 'bg-gray-700' },
-          ];
 
           // Filter employees for the current supervisor's branch
           const employeesInBranch = users.filter(
@@ -1787,7 +2636,12 @@
 
           const getUserDetails = (userId) => {
             const user = users.find(u => u.id === userId);
-            return user ? `${user.name} (${user.employeeNumber})` : 'N/A';
+            return user ? `${user.name} / ${user.nameAr || user.name} (${user.employeeNumber})` : 'N/A';
+          };
+
+          const getPaymentMethodDetails = (methodName) => {
+            const method = paymentMethods.find(m => m.name === methodName);
+            return method ? `${method.name} / ${method.nameAr || method.name}` : methodName;
           };
 
           const handleEmployeeSelect = (employeeId) => {
@@ -1803,8 +2657,8 @@
             setSelectedEmployeeLastPayments(lastPayments);
           };
 
-          const handlePaymentMethodSelect = (method) => {
-            setPaymentMethod(method);
+          const handlePaymentMethodSelect = (methodName) => {
+            setPaymentMethod(methodName);
             setMessage(''); // Clear any previous messages
             setCurrentStep('enterAmount'); // Move to calculator step directly
           };
@@ -1828,7 +2682,7 @@
             // Reset form for next entry
             setSelectedEmployeeId('');
             setAmount('');
-            setPaymentMethod(translations.cash); // Reset to default
+            setPaymentMethod(''); // Reset to empty
             setCurrentStep('selectEmployee');
             setSelectedEmployeeLastPayments([]); // Clear last payments display
           };
@@ -1836,21 +2690,23 @@
           const handleAmountCancel = () => {
             setAmount('');
             setSelectedEmployeeId('');
-            setPaymentMethod(translations.cash); // Reset payment method
+            setPaymentMethod(''); // Reset payment method
             setCurrentStep('selectEmployee'); // Go back to employee selection
             setMessage(translations.amountEntryCancelled);
             setSelectedEmployeeLastPayments([]); // Clear last payments display
           };
 
+          const paymentTableColumns = [
+            { key: 'paymentNumber', header: translations.serialNo },
+            { key: 'employeeId', header: translations.employee, render: (item) => getUserDetails(item.employeeId) },
+            { key: 'amount', header: translations.amount, render: (item) => `SAR ${item.amount.toFixed(2)}` },
+            { key: 'paymentMethod', header: translations.method, render: (item) => getPaymentMethodDetails(item.paymentMethod) },
+            { key: 'timestamp', header: translations.timestamp, render: (item) => item.timestamp?.toLocaleString() },
+          ];
+
           return (
             <div className="bg-white p-8 rounded-xl shadow-lg">
               <h2 className="text-3xl font-bold text-gray-800 mb-6">{translations.supervisorDashboard} ({getBranchName(currentUser.branchId)})</h2>
-
-              {message && (
-                <div className={`mb-4 p-3 rounded-lg text-center ${message.includes(translations.paymentAddedSuccessfully) || message.includes(translations.amountEntryCancelled) ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {message}
-                </div>
-              )}
 
               <div className="flex flex-col lg:flex-row gap-6">
                 {/* Left Column: Payment Entry Form */}
@@ -1875,7 +2731,7 @@
                                 className="w-16 h-16 rounded-full object-cover mb-2 border-2 border-gray-300"
                                 onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/CCCCCC/000000?text=${employee.name.substring(0,2).toUpperCase()}`; }}
                               />
-                              <span className="text-sm font-medium text-gray-800 text-center">{employee.name}</span>
+                              <span className="text-sm font-medium text-gray-800 text-center">{employee.name} / {employee.nameAr || employee.name}</span>
                               <span className="text-xs text-gray-500">{employee.employeeNumber}</span>
                             </div>
                           ))
@@ -1892,14 +2748,14 @@
                       <div className={`flex flex-wrap gap-3 justify-center p-4 rounded-lg transition-all duration-300`}>
                         {paymentMethods.map(method => (
                           <button
-                            key={method.name}
+                            key={method.id}
                             type="button"
                             onClick={() => handlePaymentMethodSelect(method.name)}
-                            className={`flex items-center justify-center px-4 py-2 rounded-lg font-semibold text-white transition duration-200 transform hover:scale-105 shadow-md
+                            className={`flex flex-col items-center justify-center w-24 h-24 rounded-lg font-semibold text-white transition duration-200 transform hover:scale-105 shadow-md p-2
                                         ${paymentMethod === method.name ? 'ring-4 ring-offset-2 ring-opacity-75 ring-blue-500' : ''} ${method.color}`}
                           >
-                            <span className="text-xl mr-2">{method.icon}</span>
-                            {method.name}
+                            <span className="payment-method-icon">{method.icon}</span>
+                            <span className="text-sm text-center mt-1">{method.name} / {method.nameAr || method.name}</span>
                           </button>
                         ))}
                       </div>
@@ -1908,7 +2764,7 @@
 
                   {currentStep === 'enterAmount' && (
                     <div>
-                      <label htmlFor="amount" className="block text-gray-700 text-sm font-semibold mb-2">{translations.enterAmount} {getUserDetails(selectedEmployeeId)} {translations.via} {paymentMethod}</label>
+                      <label htmlFor="amount" className="block text-gray-700 text-sm font-semibold mb-2">{translations.enterAmount} {getUserDetails(selectedEmployeeId)} {translations.via} {getPaymentMethodDetails(paymentMethod)}</label>
                       <CalculatorInput
                         value={amount}
                         onChange={setAmount}
@@ -1938,7 +2794,7 @@
                             {selectedEmployeeLastPayments.map((payment) => (
                               <tr key={payment.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
                                 <td className="py-2 px-3 text-xs text-gray-800 font-medium text-green-700">SAR {payment.amount.toFixed(2)}</td>
-                                <td className="py-2 px-3 text-xs text-gray-800">{payment.paymentMethod}</td>
+                                <td className="py-2 px-3 text-xs text-gray-800">{getPaymentMethodDetails(payment.paymentMethod)}</td>
                                 <td className="py-2 px-3 text-xs text-gray-800">
                                   {payment.timestamp?.toLocaleTimeString()}
                                 </td>
@@ -1952,32 +2808,17 @@
 
                   <div className="p-6 bg-purple-50 rounded-lg shadow-inner flex-grow">
                     <h3 className="text-2xl font-semibold text-purple-800 mb-4">{translations.recentPaymentsInBranch}</h3>
-                    <div className="overflow-x-auto">
-                      <table className="min-w-full bg-white rounded-lg overflow-hidden">
-                        <thead className="bg-purple-100">
-                          <tr>
-                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.serialNo}</th>
-                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.employee}</th>
-                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.amount}</th>
-                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.method}</th>
-                            <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.timestamp}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {paymentsInBranch.map((payment) => (
-                            <tr key={payment.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
-                              <td className="py-3 px-4 text-sm text-gray-800">{payment.paymentNumber}</td>
-                              <td className="py-3 px-4 text-sm text-gray-800">{getUserDetails(payment.employeeId)}</td>
-                              <td className="py-3 px-4 text-sm text-gray-800 font-medium text-green-700">SAR {payment.amount.toFixed(2)}</td>
-                              <td className="py-3 px-4 text-sm text-gray-800">{payment.paymentMethod}</td>
-                              <td className="py-3 px-4 text-sm text-gray-800">
-                                {payment.timestamp?.toLocaleString()}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                    <PaginatedTable
+                      data={paymentsInBranch}
+                      columns={paymentTableColumns}
+                      itemsPerPageOptions={[5, 10]}
+                      initialItemsPerPage={5}
+                      searchPlaceholder={translations.search + '...'}
+                      downloadXLSX={() => { /* Not needed here */ }}
+                      translations={translations}
+                      getUserDetails={getUserDetails}
+                      getPaymentMethodDetails={getPaymentMethodDetails}
+                    />
                   </div>
                 </div>
               </div>
@@ -1987,7 +2828,7 @@
 
         // Employee Dashboard Component
         const EmployeeDashboard = () => {
-          const { currentUser, payments, branches, users, translations } = useAppContext();
+          const { currentUser, payments, branches, users, paymentMethods, translations } = useAppContext();
           const [branchName, setBranchName] = useState('N/A');
           const [totalEarned, setTotalEarned] = useState(0);
 
@@ -2006,6 +2847,17 @@
             setTotalEarned(sum);
           }, [payments, currentUser, branches]); // Re-run when payments, currentUser, or branches change
 
+          const getPaymentMethodDetails = (methodName) => {
+            const method = paymentMethods.find(m => m.name === methodName);
+            return method ? `${method.name} / ${method.nameAr || method.name}` : methodName;
+          };
+
+          const employeePaymentColumns = [
+            { key: 'paymentNumber', header: translations.serialNo },
+            { key: 'amount', header: translations.amount, render: (item) => `SAR ${item.amount.toFixed(2)}` },
+            { key: 'paymentMethod', header: translations.method, render: (item) => getPaymentMethodDetails(item.paymentMethod) },
+            { key: 'timestamp', header: translations.timestamp, render: (item) => item.timestamp?.toLocaleString() },
+          ];
 
           return (
             <div className="bg-white p-8 rounded-xl shadow-lg">
@@ -2032,30 +2884,14 @@
 
               <div className="p-6 bg-gray-50 rounded-lg shadow-inner">
                 <h3 className="text-2xl font-semibold text-gray-800 mb-4">{translations.yourPaymentsHistory}</h3>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full bg-white rounded-lg overflow-hidden">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.serialNo}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.amount}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.method}</th>
-                        <th className="py-3 px-4 text-left text-sm font-medium text-gray-700">{translations.timestamp}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {payments.filter(p => p.employeeId === currentUser.id).map((payment) => (
-                        <tr key={payment.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
-                          <td className="py-3 px-4 text-sm text-gray-800">{payment.paymentNumber}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800 font-medium text-green-700">SAR {payment.amount.toFixed(2)}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">{payment.paymentMethod}</td>
-                          <td className="py-3 px-4 text-sm text-gray-800">
-                            {payment.timestamp?.toLocaleString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <PaginatedTable
+                  data={payments.filter(p => p.employeeId === currentUser.id)}
+                  columns={employeePaymentColumns}
+                  searchPlaceholder={translations.search + '...'}
+                  downloadXLSX={() => { /* Not needed here */ }}
+                  translations={translations}
+                  getPaymentMethodDetails={getPaymentMethodDetails}
+                />
               </div>
             </div>
           );
