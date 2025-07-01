@@ -49,18 +49,7 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import {
-            getAuth,
-            signInAnonymously,
-            signInWithCustomToken,
-            onAuthStateChanged,
-            createUserWithEmailAndPassword, // New for email/password signup
-            signInWithEmailAndPassword,     // New for email/password login
-            sendPasswordResetEmail,         // New for password reset
-            updatePassword,                 // New for changing password
-            EmailAuthProvider,              // New for re-authentication
-            reauthenticateWithCredential    // New for re-authentication
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, query, onSnapshot, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Expose Firebase functions globally for the Babel script
@@ -70,12 +59,6 @@
             signInAnonymously,
             signInWithCustomToken,
             onAuthStateChanged,
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            sendPasswordResetEmail,
-            updatePassword,
-            EmailAuthProvider,
-            reauthenticateWithCredential,
             getFirestore,
             collection,
             query,
@@ -111,24 +94,11 @@
             userId: 'User ID:',
             logout: 'Logout',
             loginWelcome: 'Welcome! Please Log In',
-            emailPlaceholder: 'Email',
-            passwordPlaceholder: 'Password',
+            emailPlaceholder: 'Email or Employee ID',
+            passwordPlaceholder: 'Password (any for demo)',
             loginButton: 'Login',
-            signupButton: 'Sign Up',
-            forgotPassword: 'Forgot Password?',
-            resetPasswordEmailSent: 'Password reset email sent! Check your inbox.',
-            loginError: 'Invalid email or password.',
-            signupError: 'Error creating account. Please try again.',
-            changePassword: 'Change Password',
-            newPassword: 'New Password',
-            confirmNewPassword: 'Confirm New Password',
-            currentPassword: 'Current Password',
-            passwordMismatch: 'New passwords do not match.',
-            passwordChangedSuccessfully: 'Password changed successfully!',
-            passwordChangeError: 'Error changing password. Please re-authenticate and try again.',
-            reauthenticatePrompt: 'Please re-enter your current password to confirm.',
-            reauthenticationFailed: 'Re-authentication failed. Please check your current password.',
-            backToLogin: 'Back to Login',
+            loginError: 'Invalid email/employee ID or password.',
+            tryLoginWith: 'Try logging in with:',
             admin: 'Admin',
             supervisor: 'Supervisor',
             employeeRole: 'Employee', // Renamed to avoid conflict with 'employee' for table header
@@ -275,24 +245,11 @@
             userId: 'معرف المستخدم:',
             logout: 'تسجيل الخروج',
             loginWelcome: 'أهلاً بك! الرجاء تسجيل الدخول',
-            emailPlaceholder: 'البريد الإلكتروني',
-            passwordPlaceholder: 'كلمة المرور',
+            emailPlaceholder: 'البريد الإلكتروني أو رقم الموظف',
+            passwordPlaceholder: 'كلمة المرور (أي شيء للعرض)',
             loginButton: 'تسجيل الدخول',
-            signupButton: 'إنشاء حساب',
-            forgotPassword: 'هل نسيت كلمة المرور؟',
-            resetPasswordEmailSent: 'تم إرسال بريد إلكتروني لإعادة تعيين كلمة المرور! تحقق من بريدك الوارد.',
-            loginError: 'بريد إلكتروني أو كلمة مرور غير صحيحة.',
-            signupError: 'خطأ في إنشاء الحساب. الرجاء المحاولة مرة أخرى.',
-            changePassword: 'تغيير كلمة المرور',
-            newPassword: 'كلمة المرور الجديدة',
-            confirmNewPassword: 'تأكيد كلمة المرور الجديدة',
-            currentPassword: 'كلمة المرور الحالية',
-            passwordMismatch: 'كلمتا المرور الجديدتان غير متطابقتين.',
-            passwordChangedSuccessfully: 'تم تغيير كلمة المرور بنجاح!',
-            passwordChangeError: 'خطأ في تغيير كلمة المرور. الرجاء إعادة المصادقة والمحاولة مرة أخرى.',
-            reauthenticatePrompt: 'الرجاء إعادة إدخال كلمة المرور الحالية للتأكيد.',
-            reauthenticationFailed: 'فشلت إعادة المصادقة. الرجاء التحقق من كلمة المرور الحالية.',
-            backToLogin: 'العودة لتسجيل الدخول',
+            loginError: 'بريد إلكتروني/رقم موظف أو كلمة مرور غير صحيحة.',
+            tryLoginWith: 'جرب تسجيل الدخول باستخدام:',
             admin: 'المشرف',
             supervisor: 'المشرف الفرعي',
             employeeRole: 'الموظف', // Renamed to avoid conflict with 'employee' for table header
@@ -452,44 +409,40 @@
           const [appId, setAppId] = useState('');
           const [userId, setUserId] = useState(null);
           const [message, setMessage] = useState(''); // Global message state
-          const [isAuthReady, setIsAuthReady] = useState(false); // New state to track auth readiness
 
           useEffect(() => {
             const initFirebase = async () => {
                 let configToUse = null;
-                // Define a default Firebase config for local testing if __firebase_config is not provided
-                const defaultFirebaseConfig = {
-                    apiKey: "AIzaSyDazyxOVaF0gJPw9z3KOctXOr8hernzfCg",
-                    authDomain: "afg-3006-01.firebaseapp.com",
-                    projectId: "afg-3006-01",
-                    storageBucket: "afg-3006-01.firebasestorage.app",
-                    messagingSenderId: "734860701348",
-                    appId: "1:734860701348:web:b68312f0748d3970c00031",
-                    measurementId: "G-CJ95TXTD9D"
-
-                };
-
                 try {
                     // Attempt to parse __firebase_config from the Canvas environment
                     if (typeof __firebase_config !== 'undefined' && __firebase_config) {
                         configToUse = JSON.parse(__firebase_config);
                         console.log("Using Firebase config from Canvas environment.");
-                    } else {
-                        console.warn("Firebase config (__firebase_config) is not defined in the environment. Using default fallback config. Please provide your Firebase config for full functionality.");
-                        configToUse = defaultFirebaseConfig;
                     }
                 } catch (parseError) {
-                    console.error("Error parsing __firebase_config from Canvas environment. Using default fallback config:", parseError);
-                    configToUse = defaultFirebaseConfig;
+                    console.warn("Could not parse __firebase_config from Canvas environment. Falling back to hardcoded config.", parseError);
+                }
+
+                // If parsing failed or __firebase_config was not defined, use the hardcoded config
+                if (!configToUse) {
+                    configToUse = {
+                        apiKey: "AIzaSyDazyxOVaF0gJPw9z3KOctXOr8hernzfCg",
+                        authDomain: "afg-3006-01.firebaseapp.com",
+                        projectId: "afg-3006-01",
+                        storageBucket: "afg-3006-01.firebasestorage.app",
+                        messagingSenderId: "734860701348",
+                        appId: "1:734860701348:web:b68312f0748d3970c00031",
+                        measurementId: "G-CJ95TXTD9D"
+                    };
+                    console.log("Using hardcoded Firebase config.");
                 }
 
                 try {
                     const currentAppId = typeof __app_id !== 'undefined' ? __app_id : configToUse.projectId;
                     const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-                    if (!currentAppId) {
-                        console.error("App ID is not defined. Cannot initialize Firebase.");
-                        setLoginError("App ID missing. Cannot initialize app.");
+                    if (!configToUse) {
+                        console.error("Firebase config is still null after all attempts. Cannot initialize.");
                         setLoading(false);
                         return;
                     }
@@ -504,37 +457,27 @@
 
                     console.log("Firebase initialized successfully!"); // Debugging log
 
-                    // Always try to sign in with custom token or anonymously first
+                    // Sign in with custom token or anonymously
                     if (initialAuthToken) {
                         await firebase.signInWithCustomToken(firebaseAuth, initialAuthToken);
                     } else {
                         await firebase.signInAnonymously(firebaseAuth);
                     }
 
-                    firebase.onAuthStateChanged(firebaseAuth, async (user) => {
+                    firebase.onAuthStateChanged(firebaseAuth, (user) => {
                         if (user) {
                             setUserId(user.uid);
-                            console.log("User authenticated:", user.uid, "Email:", user.email); // Debugging log
-
-                            // If the user is logged in via email/password, try to find their profile
-                            if (user.email) {
-                                // We will rely on the users onSnapshot to update currentUser
-                                // For now, set a basic user object
-                                setCurrentUser({ id: user.uid, email: user.email, role: 'unknown', name: user.email.split('@')[0], nameAr: user.email.split('@')[0] });
-                                setIsLoggedIn(true);
-                            } else {
-                                // For anonymous users or custom token users, keep existing logic
-                                setCurrentUser({ id: user.uid, email: 'anonymous', role: 'anonymous', name: 'Anonymous', nameAr: 'مجهول' });
-                                setIsLoggedIn(true);
-                            }
+                            console.log("User authenticated:", user.uid); // Debugging log
                         } else {
-                            // If user logs out or token expires, ensure isLoggedIn is false
-                            setIsLoggedIn(false);
-                            setCurrentUser(null);
-                            // No automatic anonymous sign-in here, let the Login component handle it if needed
+                            // If user logs out or token expires, sign in anonymously
+                            firebase.signInAnonymously(firebaseAuth).then(anonUser => {
+                                setUserId(anonUser.user.uid);
+                                console.log("Signed in anonymously:", anonUser.user.uid); // Debugging log
+                            }).catch(anonError => {
+                                console.error("Error signing in anonymously:", anonError); // Debugging log
+                            });
                         }
-                        setIsAuthReady(true); // Auth state is now ready
-                        setLoading(false); // App is ready to render based on auth state
+                        setLoading(false); // Auth state is ready
                     });
 
                 } catch (error) {
@@ -548,14 +491,10 @@
           }, []); // Run only once on component mount
 
           useEffect(() => {
-            // Only proceed if db, auth, and auth state are ready
-            if (!db || !auth || !isAuthReady) {
-                console.log("Firestore listeners not yet set up: db, auth, or isAuthReady not ready.", { db, auth, isAuthReady });
-                return;
-            }
+            if (!db || !userId) return; // Wait for db and userId to be ready
 
             const publicDataPath = `artifacts/${appId}/public/data`;
-            console.log("Setting up Firestore listeners for path:", publicDataPath); // Debugging log
+            console.log("Listening to Firestore path:", publicDataPath); // Debugging log
 
             // Listen for branches
             const branchesQuery = firebase.query(firebase.collection(db, `${publicDataPath}/branches`));
@@ -570,30 +509,9 @@
             const unsubscribeUsers = firebase.onSnapshot(usersQuery, (snapshot) => {
                 const fetchedUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setUsers(fetchedUsers);
-                // Update currentUser if their profile changes and they are logged in via email/password
-                if (auth.currentUser && auth.currentUser.email) {
-                    const foundUser = fetchedUsers.find(u => u.email === auth.currentUser.email);
-                    if (foundUser) {
-                        setCurrentUser(foundUser);
-                        setIsLoggedIn(true);
-                    } else {
-                        // If user was deleted from Firestore, but still logged in via Auth
-                        setCurrentUser({ id: auth.currentUser.uid, email: auth.currentUser.email, role: 'unknown', name: auth.currentUser.email.split('@')[0], nameAr: auth.currentUser.email.split('@')[0] });
-                        setIsLoggedIn(true);
-                    }
-                } else if (auth.currentUser) {
-                    // For anonymous or custom token users
-                    const foundUser = fetchedUsers.find(u => u.id === auth.currentUser.uid);
-                    if (foundUser) {
-                        setCurrentUser(foundUser);
-                        setIsLoggedIn(true);
-                    } else {
-                        setCurrentUser({ id: auth.currentUser.uid, email: 'anonymous', role: 'anonymous', name: 'Anonymous', nameAr: 'مجهول' });
-                        setIsLoggedIn(true);
-                    }
-                } else {
-                    setIsLoggedIn(false);
-                    setCurrentUser(null);
+                // Update currentUser if their profile changes
+                if (currentUser && fetchedUsers.some(u => u.id === currentUser.id)) {
+                    setCurrentUser(fetchedUsers.find(u => u.id === currentUser.id));
                 }
                 console.log("Fetched users:", fetchedUsers); // Debugging log
             }, (error) => console.error("Error fetching users:", error));
@@ -623,108 +541,31 @@
 
             // Cleanup listeners on unmount
             return () => {
-                console.log("Cleaning up Firestore listeners.");
                 unsubscribeBranches();
                 unsubscribeUsers();
                 unsubscribePayments();
                 unsubscribePaymentMethods();
             };
-          }, [db, auth, appId, isAuthReady]); // Re-run when db, auth, appId, or isAuthReady changes
+          }, [db, userId, appId, currentUser]); // Re-run when db or userId changes
 
+          // Simulate user login (now uses fetched users)
+          const handleLogin = (identifier, password) => {
+            // Try to find user by email first
+            let user = users.find(u => u.email === identifier);
 
-          // Handle user login with email and password
-          const handleLogin = async (email, password) => {
-            try {
-              await firebase.signInWithEmailAndPassword(auth, email, password);
-              // onAuthStateChanged listener will handle setting currentUser and isLoggedIn
-              setLoginError('');
-            } catch (error) {
-              console.error("Login error:", error);
-              if (error.code === 'auth/operation-not-allowed') {
-                  setLoginError("Email/Password sign-in is not enabled. Please enable it in Firebase Console.");
-              } else {
-                  setLoginError(translations[language].loginError);
-              }
-            }
-          };
-
-          // Handle user signup with email and password
-          const handleSignup = async (email, password) => {
-            try {
-              const userCredential = await firebase.createUserWithEmailAndPassword(auth, email, password);
-              const user = userCredential.user;
-
-              // Add the new user to the Firestore 'users' collection with a default role (e.g., 'employee')
-              // An admin would then assign a proper role and branch.
-              await firebase.setDoc(firebase.doc(db, `artifacts/${appId}/public/data/users`, user.uid), {
-                id: user.uid,
-                name: user.email.split('@')[0], // Default name from email
-                nameAr: user.email.split('@')[0],
-                email: user.email,
-                role: 'employee', // Default role for new signups
-                branchId: '', // No branch assigned by default
-                targetAmount: 0,
-                employeeNumber: `EMP${String(users.length + 1).padStart(3, '0')}`,
-                imageUrl: `https://placehold.co/100x100/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${user.email.substring(0,2).toUpperCase()}`,
-                createdAt: firebase.serverTimestamp(),
-              });
-
-              setMessage(translations[language].userAddedSuccessfully);
-              // onAuthStateChanged listener will handle setting currentUser and isLoggedIn
-            } catch (error) {
-              console.error("Signup error:", error);
-              if (error.code === 'auth/operation-not-allowed') {
-                  setLoginError("Email/Password sign-up is not enabled. Please enable it in Firebase Console.");
-              } else {
-                  setLoginError(translations[language].signupError);
-              }
-            }
-          };
-
-          // Handle password reset
-          const handleForgotPassword = async (email) => {
-            try {
-              await firebase.sendPasswordResetEmail(auth, email);
-              setMessage(translations[language].resetPasswordEmailSent);
-              setLoginError('');
-            } catch (error) {
-              console.error("Password reset error:", error);
-              if (error.code === 'auth/operation-not-allowed') {
-                  setMessage("Email/Password sign-in is not enabled. Please enable it in Firebase Console to use password reset.");
-              } else {
-                  setMessage("Error sending password reset email: " + error.message);
-              }
-            }
-          };
-
-          // Handle password change for logged-in user
-          const handleChangePassword = async (currentPassword, newPassword) => {
-            const user = auth.currentUser;
+            // If not found by email, try by employeeNumber
             if (!user) {
-                setMessage("No user logged in.");
-                return;
+                user = users.find(u => u.employeeNumber === identifier);
             }
 
-            try {
-                // Re-authenticate the user with their current password
-                const credential = firebase.EmailAuthProvider.credential(user.email, currentPassword);
-                await firebase.reauthenticateWithCredential(user, credential);
-
-                // Update the password
-                await firebase.updatePassword(user, newPassword);
-                setMessage(translations[language].passwordChangedSuccessfully);
-            } catch (error) {
-                console.error("Error changing password:", error);
-                if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    setMessage(translations[language].reauthenticationFailed);
-                } else if (error.code === 'auth/operation-not-allowed') {
-                    setMessage("Email/Password sign-in is not enabled. Please enable it in Firebase Console to change password.");
-                } else {
-                    setMessage(translations[language].passwordChangeError);
-                }
+            if (user) {
+              setIsLoggedIn(true);
+              setCurrentUser(user);
+              setLoginError('');
+            } else {
+              setLoginError(translations[language].loginError);
             }
           };
-
 
           // Simulate user logout
           const handleLogout = async () => {
@@ -733,7 +574,8 @@
                     await auth.signOut();
                     setIsLoggedIn(false);
                     setCurrentUser(null);
-                    // No automatic anonymous sign-in here after logout, let the Login component handle it
+                    // Re-authenticate anonymously to maintain a session
+                    await firebase.signInAnonymously(auth);
                 } catch (error) {
                     console.error("Error signing out:", error);
                 }
@@ -805,20 +647,7 @@
                 `EMP${String(users.length + 1).padStart(3, '0')}`
               );
 
-              // Find the Firebase Auth user by email to get their UID
-              // This assumes the user has already signed up via email/password in Firebase Auth
-              const authUser = auth.currentUser && auth.currentUser.email === email ? auth.currentUser : null;
-              if (!authUser) {
-                  // If the user is not currently logged in with this email, we cannot get their UID reliably.
-                  // For a real app, you'd need to ensure the user is created in Auth first,
-                  // or use a Cloud Function to create the user in Auth and Firestore simultaneously.
-                  // For this demo, we'll just use a generated ID, which might lead to issues if Auth UID is needed later.
-                  console.warn("User with this email not found in current Firebase Auth session. Generating a new ID for Firestore.");
-              }
-              const userIdForFirestore = authUser ? authUser.uid : crypto.randomUUID(); // Fallback to random if no auth user
-
-              await firebase.setDoc(firebase.doc(db, `artifacts/${appId}/public/data/users`, userIdForFirestore), {
-                id: userIdForFirestore, // Use Auth UID if available, else a generated one
+              await firebase.addDoc(firebase.collection(db, `artifacts/${appId}/public/data/users`), {
                 name,
                 nameAr: nameAr || name, // Store Arabic name, default to English if not provided
                 email,
@@ -963,9 +792,6 @@
               payments,
               paymentMethods, // Provide payment methods
               handleLogin,
-              handleSignup, // Provide signup function
-              handleForgotPassword, // Provide forgot password function
-              handleChangePassword, // Provide change password function
               handleLogout,
               addBranch,
               deleteBranch,
@@ -989,7 +815,6 @@
               userId, // Provide userId to components if needed
               message, // Provide global message
               setMessage, // Provide global message setter
-              auth, // Pass auth object for direct Firebase Auth operations
             }}>
               <div className="min-h-screen bg-gray-100 font-inter" dir={language === 'ar' ? 'rtl' : 'ltr'}>
                 {isLoggedIn ? <MainLayout /> : <Login />}
@@ -1000,106 +825,59 @@
 
         // Login Component
         const Login = () => {
-          const { handleLogin, handleSignup, handleForgotPassword, loginError, translations, setMessage } = useAppContext();
-          const [email, setEmail] = useState('');
-          const [password, setPassword] = useState('');
-          const [showForgotPassword, setShowForgotPassword] = useState(false);
+          const { handleLogin, loginError, translations } = useAppContext();
+          const [identifier, setIdentifier] = useState(''); // Can be email or employee ID
+          const [password, setPassword] = useState(''); // Dummy password field
 
           const handleSubmit = (e) => {
             e.preventDefault();
-            handleLogin(email, password);
-          };
-
-          const handleSignupSubmit = (e) => {
-            e.preventDefault();
-            handleSignup(email, password);
-          };
-
-          const handleForgotPasswordSubmit = (e) => {
-            e.preventDefault();
-            handleForgotPassword(email);
-            setShowForgotPassword(false); // Hide the form after sending email
-            setEmail(''); // Clear email field
+            handleLogin(identifier, password);
           };
 
           return (
             <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 to-purple-600 p-4">
               <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md text-center">
                 <h2 className="text-3xl font-bold mb-6 text-gray-800">{translations.loginWelcome}</h2>
-                {!showForgotPassword ? (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <input
-                        type="email"
-                        placeholder={translations.emailPlaceholder}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <input
-                        type="password"
-                        placeholder={translations.passwordPlaceholder}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                        required
-                      />
-                    </div>
-                    {loginError && (
-                      <div className="text-red-600 text-sm mt-2">{loginError}</div>
-                    )}
-                    <button
-                      type="submit"
-                      className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg"
-                    >
-                      {translations.loginButton}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleSignupSubmit}
-                      className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition duration-300 transform hover:scale-105 shadow-lg mt-2"
-                    >
-                      {translations.signupButton}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setShowForgotPassword(true); setMessage(''); setLoginError(''); }}
-                      className="w-full text-blue-600 mt-4 text-sm hover:underline"
-                    >
-                      {translations.forgotPassword}
-                    </button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
-                    <p className="text-gray-700">{translations.forgotPassword}</p>
-                    <div>
-                      <input
-                        type="email"
-                        placeholder={translations.emailPlaceholder}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                        required
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg"
-                    >
-                      {translations.resetPasswordEmailSent.split('!')[0]} {/* Use part of the text for button */}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setShowForgotPassword(false); setEmail(''); setMessage(''); setLoginError(''); }}
-                      className="w-full text-gray-600 mt-4 text-sm hover:underline"
-                    >
-                      {translations.backToLogin}
-                    </button>
-                  </form>
-                )}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <input
+                      type="text" // Changed to text to accommodate employee ID
+                      placeholder={translations.emailPlaceholder}
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="password"
+                      placeholder={translations.passwordPlaceholder}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                      required
+                    />
+                  </div>
+                  {loginError && (
+                    <div className="text-red-600 text-sm mt-2">{loginError}</div>
+                  )}
+                  <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-lg"
+                  >
+                    {translations.loginButton}
+                  </button>
+                </form>
+                <p className="mt-6 text-gray-600 text-sm">
+                  {translations.tryLoginWith}
+                  <br />
+                  <span className="font-semibold">admin@example.com</span> ({translations.admin})
+                  <br />
+                  <span className="font-semibold">supa@example.com</span> ({translations.supervisor}, {translations.branch} 1)
+                  <br />
+                  <span className="font-semibold">empx@example.com</span> ({translations.employeeRole}, {translations.branch} 1)
+                </p>
               </div>
             </div>
           );
@@ -1108,9 +886,8 @@
 
         // Main Layout component that routes based on user role
         const MainLayout = () => {
-          const { currentUser, handleLogout, language, setLanguage, translations, userId, message, handleChangePassword } = useAppContext();
+          const { currentUser, handleLogout, language, setLanguage, translations, userId, message } = useAppContext();
           const [adminPage, setAdminPage] = useState('analytics'); // 'analytics', 'branches', 'users', 'payments', 'paymentMethods'
-          const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
           if (!currentUser) {
             return <Login />; // Should not happen if isLoggedIn is true
@@ -1125,20 +902,7 @@
               case 'employee':
                 return <EmployeeDashboard />;
               default:
-                // For users not yet assigned a role in Firestore, or anonymous users
-                return (
-                    <div className="bg-white p-8 rounded-xl shadow-lg text-center">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">{translations.welcome} {currentUser.name}!</h2>
-                        <p className="text-lg text-gray-600">Your account is awaiting role assignment by an administrator.</p>
-                        <p className="text-sm text-gray-500 mt-2">{translations.userId} {userId}</p>
-                        <button
-                            onClick={handleLogout}
-                            className="mt-6 bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition duration-300 shadow-md"
-                        >
-                            {translations.logout}
-                        </button>
-                    </div>
-                );
+                return <Login />; // If role is not set or invalid
             }
           };
 
@@ -1148,17 +912,9 @@
                 <h1 className="text-2xl font-bold text-gray-800">{translations.appName}</h1>
                 <div className="flex items-center space-x-4">
                   <span className="text-gray-600">
-                    {translations.welcome} <span className="font-semibold">{currentUser.name}</span> ({currentUser.role === 'admin' ? translations.admin : currentUser.role === 'supervisor' ? translations.supervisor : currentUser.role === 'employee' ? translations.employeeRole : currentUser.role})
+                    {translations.welcome} <span className="font-semibold">{currentUser.name}</span> ({currentUser.role === 'admin' ? translations.admin : currentUser.role === 'supervisor' ? translations.supervisor : translations.employeeRole})
                   </span>
-                  <span className="text-sm text-gray-500">{translations.userId} {userId}</span>
-                  {currentUser.email && ( // Only show change password for email/password users
-                    <button
-                        onClick={() => setShowChangePasswordModal(true)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm font-semibold hover:bg-blue-600 transition duration-300"
-                    >
-                        {translations.changePassword}
-                    </button>
-                  )}
+                  <span className="text-sm text-gray-500">{userId}</span>
                   <div className="flex space-x-2">
                     <button
                       onClick={() => setLanguage('en')}
@@ -1189,116 +945,20 @@
                 )}
                 {renderDashboard()}
               </main>
-
-              {/* Change Password Modal */}
-              {showChangePasswordModal && (
-                <ChangePasswordModal
-                    onClose={() => setShowChangePasswordModal(false)}
-                    handleChangePassword={handleChangePassword}
-                />
-              )}
             </div>
           );
         };
 
-        // Change Password Modal Component
-        const ChangePasswordModal = ({ onClose, handleChangePassword }) => {
-            const { translations, setMessage } = useAppContext();
-            const [currentPassword, setCurrentPassword] = useState('');
-            const [newPassword, setNewPassword] = useState('');
-            const [confirmNewPassword, setConfirmNewPassword] = useState('');
-            const [error, setError] = useState('');
-
-            const handleSubmit = async (e) => {
-                e.preventDefault();
-                setError('');
-                if (newPassword !== confirmNewPassword) {
-                    setError(translations.passwordMismatch);
-                    return;
-                }
-                if (newPassword.length < 6) {
-                    setError("New password must be at least 6 characters long.");
-                    return;
-                }
-
-                // Call the handleChangePassword function from AppContext
-                await handleChangePassword(currentPassword, newPassword);
-                onClose(); // Close modal after attempt
-            };
-
-            return (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
-                        <h3 className="text-2xl font-bold mb-6 text-gray-800">{translations.changePassword}</h3>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label htmlFor="currentPassword" className="block text-gray-700 text-sm font-semibold mb-2">{translations.currentPassword}</label>
-                                <input
-                                    type="password"
-                                    id="currentPassword"
-                                    value={currentPassword}
-                                    onChange={(e) => setCurrentPassword(e.target.value)}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="newPassword" className="block text-gray-700 text-sm font-semibold mb-2">{translations.newPassword}</label>
-                                <input
-                                    type="password"
-                                    id="newPassword"
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                    required
-                                    minLength="6"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="confirmNewPassword" className="block text-gray-700 text-sm font-semibold mb-2">{translations.confirmNewPassword}</label>
-                                <input
-                                    type="password"
-                                    id="confirmNewPassword"
-                                    value={confirmNewPassword}
-                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                    required
-                                    minLength="6"
-                                />
-                            </div>
-                            {error && <div className="text-red-600 text-sm">{error}</div>}
-                            <div className="flex justify-end space-x-3 mt-6">
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    className="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition duration-200"
-                                >
-                                    {translations.cancel}
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
-                                >
-                                    {translations.changePassword}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            );
-        };
-
-
         // Utility function to export data to XLSX (tab-separated for Excel compatibility)
-        const exportToXLSX = (data, columns, fileNamePrefix, translations, getUserDetails, getBranchName, getPaymentMethodDetails, setMessage) => {
+        const exportToXLSX = (data, columns, fileNamePrefix, translations, getUserDetails, getBranchName, getPaymentMethodDetails) => {
             if (data.length === 0) {
-              setMessage(translations.noPaymentsToDownload);
+              alert(translations.noPaymentsToDownload); // Using alert for simplicity, replace with custom modal
               return;
             }
 
             const headers = columns.map(col => col.header);
-            const csvRows = [];
-            csvRows.push(headers.map(h => `"${String(h).replace(/"/g, '""')}"`).join(',')); // Use comma for CSV, wrap headers in quotes
+            const xlsxRows = [];
+            xlsxRows.push(headers.join('\t')); // Use tab for separation
 
             data.forEach(item => {
                 const row = columns.map(col => {
@@ -1312,7 +972,7 @@
                         } else if (col.key === 'branchId' && getBranchName) {
                             value = getBranchName(item.branchId);
                         } else if (col.key === 'timestamp') {
-                            value = item.timestamp ? item.timestamp.toLocaleString() : '';
+                            value = item.timestamp?.toLocaleString() || '';
                         } else if (col.key === 'amount') {
                             value = item.amount?.toFixed(2) || '0.00';
                         } else if (col.key === 'name') { // For user names
@@ -1326,20 +986,20 @@
                     } else {
                         value = item[col.key];
                     }
-                    // Ensure string conversion, handle special characters, and wrap in quotes for CSV
+                    // Ensure string conversion and handle special characters for CSV/XLSX
                     return `"${String(value).replace(/"/g, '""')}"`;
                 });
-                csvRows.push(row.join(',')); // Use comma for separation
+                xlsxRows.push(row.join('\t'));
             });
 
             // Prepend UTF-8 BOM for better Excel compatibility with Arabic characters
-            const csvString = "\uFEFF" + csvRows.join('\n');
-            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' }); // Change type to text/csv
+            const xlsxString = "\uFEFF" + xlsxRows.join('\n');
+            const blob = new Blob([xlsxString], { type: 'application/vnd.ms-excel;charset=utf-8;' });
 
             const now = new Date();
             const dateStr = now.toISOString().split('T')[0].replace(/-/g, ''); //YYYYMMDD
             const timeStr = now.toTimeString().split(' ')[0].substring(0, 5).replace(/:/g, ''); // HHMM
-            const fileName = `${fileNamePrefix}_${dateStr}_${timeStr}.csv`; // Change extension to .csv
+            const fileName = `${fileNamePrefix}_${dateStr}_${timeStr}.xls`; // TableName_YYYYMMDD_HHMM.xls
 
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -1347,7 +1007,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            setMessage(translations.paymentsDataDownloadedSuccessfully);
+            alert(translations.paymentsDataDownloadedSuccessfully); // Using alert for simplicity, replace with custom modal
         };
 
 
@@ -1370,7 +1030,6 @@
           onFilterChange,
           currentFilters,
           clearFilters,
-          setMessage, // Pass setMessage to PaginatedTable
         }) => {
           const [searchTerm, setSearchTerm] = useState('');
           const [sortKey, setSortKey] = useState(null);
@@ -1498,7 +1157,7 @@
                         <label htmlFor="filterBranch" className="block text-gray-700 text-sm font-semibold mb-2">{translations.selectBranchFilter}</label>
                         <select
                             id="filterBranch"
-                            value={filters.branchId || ''}
+                            value={currentFilters.branchId || ''}
                             onChange={(e) => onFilterChange('branchId', e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                         >
@@ -1512,7 +1171,7 @@
                         <label htmlFor="filterEmployee" className="block text-gray-700 text-sm font-semibold mb-2">{translations.selectEmployeeFilter}</label>
                         <select
                             id="filterEmployee"
-                            value={filters.employeeId || ''}
+                            value={currentFilters.employeeId || ''}
                             onChange={(e) => onFilterChange('employeeId', e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                         >
@@ -1526,7 +1185,7 @@
                         <label htmlFor="filterPaymentMethod" className="block text-gray-700 text-sm font-semibold mb-2">{translations.selectPaymentMethodFilter}</label>
                         <select
                             id="filterPaymentMethod"
-                            value={filters.paymentMethod || ''}
+                            value={currentFilters.paymentMethod || ''}
                             onChange={(e) => onFilterChange('paymentMethod', e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                         >
@@ -1543,7 +1202,7 @@
                         <input
                             type="date"
                             id="startDate"
-                            value={filters.startDate || ''}
+                            value={currentFilters.startDate || ''}
                             onChange={(e) => onFilterChange('startDate', e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                         />
@@ -1553,7 +1212,7 @@
                         <input
                             type="date"
                             id="endDate"
-                            value={filters.endDate || ''}
+                            value={currentFilters.endDate || ''}
                             onChange={(e) => onFilterChange('endDate', e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                         />
@@ -1564,7 +1223,7 @@
                         <label htmlFor="filterYear" className="block text-gray-700 text-sm font-semibold mb-2">{translations.filterByYear}</label>
                         <select
                             id="filterYear"
-                            value={filters.filterYear || ''}
+                            value={currentFilters.filterYear || ''}
                             onChange={(e) => onFilterChange('filterYear', e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                         >
@@ -1578,7 +1237,7 @@
                         <label htmlFor="filterMonth" className="block text-gray-700 text-sm font-semibold mb-2">{translations.filterByMonth}</label>
                         <select
                             id="filterMonth"
-                            value={filters.filterMonth || ''}
+                            value={currentFilters.filterMonth || ''}
                             onChange={(e) => onFilterChange('filterMonth', e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                         >
@@ -1592,7 +1251,7 @@
                         <label htmlFor="filterDay" className="block text-gray-700 text-sm font-semibold mb-2">{translations.filterByDay}</label>
                         <select
                             id="filterDay"
-                            value={filters.filterDay || ''}
+                            value={currentFilters.filterDay || ''}
                             onChange={(e) => onFilterChange('filterDay', e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 bg-white"
                         >
@@ -2111,13 +1770,13 @@
                   {/* Data Management Actions */}
                   <div className="mb-8 p-6 bg-gray-50 rounded-lg shadow-inner flex flex-wrap gap-4 justify-center">
                     <button
-                      onClick={() => exportToXLSX(payments, paymentColumns, 'Payments', translations, getUserDetails, getBranchName, getPaymentMethodDetails, setMessage)}
+                      onClick={() => exportToXLSX(payments, paymentColumns, 'Payments', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
                       className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition duration-300 shadow-md transform hover:scale-105"
                     >
                       {translations.downloadPaymentsXLSX}
                     </button>
                     <button
-                      onClick={() => exportToXLSX([...branches, ...users, ...payments, ...paymentMethods], [], 'AllData', translations, getUserDetails, getBranchName, getPaymentMethodDetails, setMessage)} // Simplified for demo, ideally separate exports
+                      onClick={() => exportToXLSX([...branches, ...users, ...payments, ...paymentMethods], [], 'AllData', translations, getUserDetails, getBranchName, getPaymentMethodDetails)} // Simplified for demo, ideally separate exports
                       className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 shadow-md transform hover:scale-105"
                     >
                       {translations.downloadAllDataXLSX}
@@ -2207,12 +1866,11 @@
                     data={branches}
                     columns={branchColumns}
                     searchPlaceholder={translations.search + ' ' + translations.branch + '...'}
-                    downloadXLSX={(data) => exportToXLSX(data, branchColumns, 'Branches', translations, getUserDetails, getBranchName, getPaymentMethodDetails, setMessage)}
+                    downloadXLSX={(data) => exportToXLSX(data, branchColumns, 'Branches', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
                     translations={translations}
                     currentFilters={{}} // Pass empty object for non-filtered tables
                     onFilterChange={() => {}}
                     clearFilters={() => {}}
-                    setMessage={setMessage}
                   />
                 </div>
               )}
@@ -2236,13 +1894,12 @@
                     data={users}
                     columns={userColumns}
                     searchPlaceholder={translations.search + ' ' + translations.employee + '...'}
-                    downloadXLSX={(data) => exportToXLSX(data, userColumns, 'Users', translations, getUserDetails, getBranchName, getPaymentMethodDetails, setMessage)}
+                    downloadXLSX={(data) => exportToXLSX(data, userColumns, 'Users', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
                     translations={translations}
                     getBranchName={getBranchName}
                     currentFilters={{}} // Pass empty object for non-filtered tables
                     onFilterChange={() => {}}
                     clearFilters={() => {}}
-                    setMessage={setMessage}
                   />
                 </div>
               )}
@@ -2254,7 +1911,7 @@
                     data={payments}
                     columns={paymentColumns}
                     searchPlaceholder={translations.search + ' ' + translations.amount + ', ' + translations.method + '...'}
-                    downloadXLSX={(data) => exportToXLSX(data, paymentColumns, 'Payments', translations, getUserDetails, getBranchName, getPaymentMethodDetails, setMessage)}
+                    downloadXLSX={(data) => exportToXLSX(data, paymentColumns, 'Payments', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
                     translations={translations}
                     getBranchName={getBranchName}
                     getUserDetails={getUserDetails}
@@ -2266,7 +1923,6 @@
                     onFilterChange={handlePaymentFilterChange}
                     currentFilters={paymentFilters}
                     clearFilters={clearPaymentFilters}
-                    setMessage={setMessage}
                   />
                 </div>
               )}
@@ -2286,12 +1942,11 @@
                     data={paymentMethods}
                     columns={paymentMethodColumns}
                     searchPlaceholder={translations.search + ' ' + translations.paymentMethod + '...'}
-                    downloadXLSX={(data) => exportToXLSX(data, paymentMethodColumns, 'PaymentMethods', translations, getUserDetails, getBranchName, getPaymentMethodDetails, setMessage)}
+                    downloadXLSX={(data) => exportToXLSX(data, paymentMethodColumns, 'PaymentMethods', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
                     translations={translations}
                     currentFilters={{}} // Pass empty object for non-filtered tables
                     onFilterChange={() => {}}
                     clearFilters={() => {}}
-                    setMessage={setMessage}
                   />
                 </div>
               )}
@@ -2303,7 +1958,7 @@
                   <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
                     <h3 className="text-2xl font-bold mb-6 text-gray-800">{translations.addBranchModalTitle}</h3>
                     <div className="mb-4">
-                      <label htmlFor="branchName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (English)</label>
+                      <label htmlFor="branchName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name}</label>
                       <input
                         type="text"
                         id="branchName"
@@ -2313,7 +1968,7 @@
                         placeholder={translations.branchNamePlaceholder}
                       />
                     </div>
-                    <div className="mb-4">
+                    <div className="mb-6">
                       <label htmlFor="branchLocation" className="block text-gray-700 text-sm font-semibold mb-2">{translations.location}</label>
                       <input
                         type="text"
@@ -2348,7 +2003,7 @@
                   <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
                     <h3 className="text-2xl font-bold mb-6 text-gray-800">{translations.editBranchModalTitle}</h3>
                     <div className="mb-4">
-                      <label htmlFor="editBranchName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name} (English)</label>
+                      <label htmlFor="editBranchName" className="block text-gray-700 text-sm font-semibold mb-2">{translations.name}</label>
                       <input
                         type="text"
                         id="editBranchName"
@@ -2977,6 +2632,18 @@
           const [currentStep, setCurrentStep] = useState('selectEmployee'); // 'selectEmployee', 'selectPaymentMethod', 'enterAmount'
           const [selectedEmployeeLastPayments, setSelectedEmployeeLastPayments] = useState([]);
 
+          // Initialize paymentFilters for SupervisorDashboard's PaginatedTable
+          const [supervisorPaymentFilters, setSupervisorPaymentFilters] = useState({
+            branchId: '',
+            employeeId: '',
+            paymentMethod: '',
+            startDate: '',
+            endDate: '',
+            filterYear: '',
+            filterMonth: '',
+            filterDay: '',
+          });
+
           // Filter employees for the current supervisor's branch
           const employeesInBranch = users.filter(
             user => user.branchId === currentUser.branchId && user.role === 'employee'
@@ -3179,7 +2846,6 @@
                       currentFilters={{}} // Pass an empty object to prevent errors
                       onFilterChange={() => {}} // Dummy function
                       clearFilters={() => {}} // Dummy function
-                      setMessage={setMessage}
                     />
                   </div>
                 </div>
@@ -3256,7 +2922,6 @@
                   currentFilters={{}} // Pass an empty object to prevent errors
                   onFilterChange={() => {}} // Dummy function
                   clearFilters={() => {}} // Dummy function
-                  setMessage={setMessage}
                 />
               </div>
             </div>
