@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,11 +30,30 @@
         }
         /* Styles for larger payment method icons */
         .payment-method-icon {
-            color: #FF6F61; /* Coral for vibrant contrast */
-            background-color: #F0F0F0; /* Light gray background */
             font-size: 2.5rem;
             line-height: 1;
-            margin-right: 1rem;
+        }
+
+        /* Approved Flash Animation */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+        .darkgreen-700 {
+            color: #15803d; /* A darker shade of green */
+        }
+        .darkgreen-800 {
+            color: #166534; /* Even darker green */
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -104,7 +122,6 @@
             admin: 'Admin',
             supervisor: 'Supervisor',
             employeeRole: 'Employee',
-            partner: 'Partner', // New role
             branch: 'Branch',
             mainBranch: 'Main Branch',
             downtownStore: 'Downtown Store',
@@ -126,7 +143,6 @@
             maintenance: 'Maintenance',
             newInstallations: 'New Installations',
             financing: 'Financing',
-            profitForPartners: 'Profit for Partners',
             date: 'Date',
             employee: 'Employee',
             branchName: 'Branch Name',
@@ -268,7 +284,7 @@
             enterNewPassword: 'Enter New Password',
             confirmNewPassword: 'Confirm New Password',
             passwordMismatch: 'Passwords do not match.',
-            passwordChangedSuccessfully: 'Password changed successfully (for demo).',
+            passwordChangedSuccessfully: 'Password changed successfully.',
             passwordChangeError: 'Error changing password.',
             employeeFinancials: 'Employee Financials',
             addExpense: 'Add Expense',
@@ -316,7 +332,10 @@
             forgotPassword: 'Forgot Password?',
             registerAdminTask: 'Registration request sent to admin. Please contact them for account activation.',
             forgotPasswordAdminTask: 'Password reset request sent to admin. Please contact them for assistance.',
-            manageUsersBranchesPayments: 'Manage Users, Branches & Payments', // New grouped translation
+            analyticsOverview: 'Analytics Overview',
+            dailyEmployeeSummary: 'Daily Employee Summary',
+            confirmDeleteExpense: 'Are you sure you want to delete this expense?',
+            confirmDeleteBonus: 'Are you sure you want to delete this bonus?',
             selectTheme: 'Select Table Theme',
             defaultTheme: 'Default',
             stripedTheme: 'Striped',
@@ -327,6 +346,41 @@
             applyPaymentMethod: 'Apply Payment Method',
             selectPaymentMethodForSelected: 'Select payment method for selected payments',
             approved: 'Approved',
+            downloadAllDataJSON: 'Download All Data (JSON)',
+            downloadAllDataExcel: 'Download All Data (Excel)',
+            filteredPaymentsExport: 'Filtered Payments',
+            downloadUserTemplate: 'Download Sample Excel',
+            uploadUserExcel: 'Upload Excel',
+            invalidExcelFile: 'Please upload a valid Excel file (.xlsx or .xls).',
+            processingUpload: 'Processing upload...',
+            emptyExcelFile: 'The uploaded Excel file is empty or contains only headers.',
+            uploadErrorsDetected: 'Upload Errors Detected!',
+            nameRequired: 'Name is required.',
+            employeeNoRequired: 'Employee Number is required.',
+            emailRequired: 'Email is required.',
+            invalidEmailFormat: 'Invalid email format.',
+            emailAlreadyExists: 'Email already exists.',
+            employeeNoAlreadyExists: 'Employee Number already exists.',
+            invalidRole: 'Invalid role. Must be one of:',
+            invalidBranchName: 'Invalid Branch Name. Branch not found.',
+            invalidTargetAmount: 'Invalid Target Amount. Must be a non-negative number.',
+            passwordRequiredForNewUser: 'Password is required for new users.',
+            passwordTooShort: 'Password must be at least 6 characters long.',
+            importingUsers: 'Importing users...',
+            usersImportedSuccessfully: 'Users imported successfully!',
+            newUsersAdded: 'new users added',
+            noNewUsersProcessed: 'No new users were processed from the file. It might contain only existing data.',
+            errorReadingExcelFile: 'Error reading Excel file. Please ensure it\'s valid.',
+            generalError: 'General Error',
+            userTemplateDownloaded: 'User import template downloaded successfully!',
+            errorDownloadingTemplate: 'Error downloading user template.',
+            userTemplateFileName: 'user_import_template.xlsx',
+            confirmDeleteSelectedUsers: 'Are you sure you want to delete selected users?',
+            deleteSelectedUsers: 'Delete Selected Users',
+            noUsersSelectedForDeletion: 'No users selected for deletion.',
+            usersDeletedSuccessfully: 'users deleted successfully!',
+            errorDeletingUsers: 'Error deleting users. Please try again.',
+            password: 'Password', // Added for Excel template header
           },
           ar: {
             appName: 'تطبيق المتجر',
@@ -341,7 +395,6 @@
             admin: 'المشرف',
             supervisor: 'المشرف الفرعي',
             employeeRole: 'الموظف',
-            partner: 'الشريك', // New role
             branch: 'الفرع',
             mainBranch: 'الفرع الرئيسي',
             downtownStore: 'متجر وسط المدينة',
@@ -363,7 +416,6 @@
             maintenance: 'صيانة',
             newInstallations: 'تجهيزات جديدة',
             financing: 'تمويل',
-            profitForPartners: 'أرباح الشركاء',
             date: 'التاريخ',
             employee: 'الموظف',
             branchName: 'اسم الفرع',
@@ -505,7 +557,7 @@
             enterNewPassword: 'أدخل كلمة مرور جديدة',
             confirmNewPassword: 'تأكيد كلمة المرور الجديدة',
             passwordMismatch: 'كلمتا المرور غير متطابقتين.',
-            passwordChangedSuccessfully: 'تم تغيير كلمة المرور بنجاح (للعرض التوضيحي).',
+            passwordChangedSuccessfully: 'تم تغيير كلمة المرور بنجاح.',
             passwordChangeError: 'خطأ في تغيير كلمة المرور.',
             employeeFinancials: 'الماليات للموظفين',
             addExpense: 'إضافة مصروف',
@@ -553,7 +605,10 @@
             forgotPassword: 'هل نسيت كلمة المرور؟',
             registerAdminTask: 'تم إرسال طلب التسجيل إلى المشرف. يرجى الاتصال بهم لتفعيل الحساب.',
             forgotPasswordAdminTask: 'تم إرسال طلب إعادة تعيين كلمة المرور إلى المشرف. يرجى الاتصال بهم للمساعدة.',
-            manageUsersBranchesPayments: 'إدارة المستخدمين والفروع والمدفوعات', // New grouped translation
+            analyticsOverview: 'نظرة عامة على التحليلات',
+            dailyEmployeeSummary: 'ملخص الموظفين اليومي',
+            confirmDeleteExpense: 'هل أنت متأكد من رغبتك في حذف هذا المصروف؟',
+            confirmDeleteBonus: 'هل أنت متأكد من رغبتك في حذف هذه المكافأة؟',
             selectTheme: 'اختر مظهر الجدول',
             defaultTheme: 'افتراضي',
             stripedTheme: 'مخطط',
@@ -564,6 +619,41 @@
             applyPaymentMethod: 'تطبيق طريقة الدفع',
             selectPaymentMethodForSelected: 'اختر طريقة الدفع للمدفوعات المحددة',
             approved: 'تمت الموافقة',
+            downloadAllDataJSON: 'تنزيل جميع البيانات (JSON)',
+            downloadAllDataExcel: 'تنزيل جميع البيانات (Excel)',
+            filteredPaymentsExport: 'المدفوعات المصفاة',
+            downloadUserTemplate: 'تنزيل نموذج إكسل',
+            uploadUserExcel: 'رفع ملف إكسل',
+            invalidExcelFile: 'الرجاء رفع ملف إكسل صالح (.xlsx أو .xls).',
+            processingUpload: 'جاري معالجة الرفع...',
+            emptyExcelFile: 'ملف الإكسل المرفوع فارغ أو يحتوي على رؤوس فقط.',
+            uploadErrorsDetected: 'تم اكتشاف أخطاء في الرفع!',
+            nameRequired: 'الاسم مطلوب.',
+            employeeNoRequired: 'رقم الموظف مطلوب.',
+            emailRequired: 'البريد الإلكتروني مطلوب.',
+            invalidEmailFormat: 'صيغة البريد الإلكتروني غير صالحة.',
+            emailAlreadyExists: 'البريد الإلكتروني موجود بالفعل.',
+            employeeNoAlreadyExists: 'رقم الموظف موجود بالفعل.',
+            invalidRole: 'دور غير صالح. يجب أن يكون أحد:',
+            invalidBranchName: 'اسم الفرع غير صالح. الفرع غير موجود.',
+            invalidTargetAmount: 'المبلغ المستهدف غير صالح. يجب أن يكون رقماً غير سالب.',
+            passwordRequiredForNewUser: 'كلمة المرور مطلوبة للمستخدمين الجدد.',
+            passwordTooShort: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل.',
+            importingUsers: 'جاري استيراد المستخدمين...',
+            usersImportedSuccessfully: 'تم استيراد المستخدمين بنجاح!',
+            newUsersAdded: 'تمت إضافة مستخدمين جدد',
+            noNewUsersProcessed: 'لم تتم معالجة أي مستخدمين جدد من الملف. قد يحتوي على بيانات موجودة فقط.',
+            errorReadingExcelFile: 'خطأ في قراءة ملف الإكسل. الرجاء التأكد من صحته.',
+            generalError: 'خطأ عام',
+            userTemplateDownloaded: 'تم تنزيل نموذج استيراد المستخدمين بنجاح!',
+            errorDownloadingTemplate: 'خطأ في تنزيل نموذج المستخدم.',
+            userTemplateFileName: 'نموذج_استيراد_المستخدمين.xlsx',
+            confirmDeleteSelectedUsers: 'هل أنت متأكد من رغبتك في حذف المستخدمين المحددين؟',
+            deleteSelectedUsers: 'حذف المستخدمين المحددين',
+            noUsersSelectedForDeletion: 'لم يتم تحديد أي مستخدمين للحذف.',
+            usersDeletedSuccessfully: 'تم حذف المستخدمين بنجاح!',
+            errorDeletingUsers: 'خطأ في حذف المستخدمين. الرجاء المحاولة مرة أخرى.',
+            password: 'كلمة المرور',
           },
         };
 
@@ -785,23 +875,39 @@
             }
           };
 
-          const changeUserPassword = async (userId, newPassword) => {
-              // This is a simulated password change for the demo.
-              // In a real application, you would use Firebase Authentication's updatePassword
-              // method, which requires the user to be recently authenticated.
-              // For a true admin-initiated password reset, you'd typically use Firebase Admin SDK
-              // on a backend server or a password reset email flow.
+          // Function for a user to change their OWN password
+          const changeCurrentUserPassword = async (newPassword) => {
+              if (!auth.currentUser) {
+                  setMessage(translations[language].passwordChangeError + ": No authenticated user.");
+                  return false;
+              }
               try {
-                  const userDocRef = firebase.doc(db, `artifacts/${appId}/public/data/users`, userId);
+                  await firebase.updatePassword(auth.currentUser, newPassword);
+                  setMessage(translations[language].passwordChangedSuccessfully);
+                  return true;
+              } catch (error) {
+                  console.error("Error changing password:", error);
+                  setMessage(`${translations[language].passwordChangeError} ${error.message}`);
+                  return false;
+              }
+          };
+
+          // Function for Admin to "reset" a user's password (simulated)
+          const adminResetUserPassword = async (userIdToReset, newPassword) => {
+              // IMPORTANT: In a real application, admin password resets should be done via
+              // Firebase Admin SDK on a secure backend server, not directly from the client.
+              // This is a simulation for demonstration purposes by updating a 'simulatedPassword' field.
+              try {
+                  const userDocRef = firebase.doc(db, `artifacts/${appId}/public/data/users`, userIdToReset);
                   await firebase.updateDoc(userDocRef, {
                       simulatedPassword: newPassword, // Store a "simulated" password field
                       updatedAt: firebase.serverTimestamp(),
                   });
-                  setMessage(translations.passwordChangedSuccessfully);
+                  setMessage(translations[language].passwordChangedSuccessfully + " (Admin reset simulated)");
                   return true;
               } catch (error) {
                   console.error("Error changing simulated password:", error);
-                  setMessage(translations.passwordChangeError);
+                  setMessage(translations[language].passwordChangeError);
                   return false;
               }
           };
@@ -813,7 +919,7 @@
                 location,
                 createdAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.branchAddedSuccessfully);
+              setMessage(translations[language].branchAddedSuccessfully);
             }
             catch (e) {
               console.error("Error adding document: ", e);
@@ -834,7 +940,7 @@
               paymentsSnapshot.forEach(async (paymentDoc) => {
                   await firebase.deleteDoc(firebase.doc(db, `artifacts/${appId}/public/data/payments`, paymentDoc.id));
               });
-              setMessage(translations.branchDeletedSuccessfully);
+              setMessage(translations[language].branchDeletedSuccessfully);
             } catch (e) {
               console.error("Error removing document: ", e);
               setMessage("Error deleting branch.");
@@ -848,7 +954,7 @@
                 location: updatedLocation,
                 updatedAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.branchUpdatedSuccessfully);
+              setMessage(translations[language].branchUpdatedSuccessfully);
             } catch (e) {
               console.error("Error updating document: ", e);
               setMessage("Error updating branch.");
@@ -874,7 +980,7 @@
                 imageUrl: imageUrl || `https://placehold.co/100x100/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${name.substring(0,2).toUpperCase()}`,
                 createdAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.userAddedSuccessfully);
+              setMessage(translations[language].userAddedSuccessfully);
             } catch (e) {
               console.error("Error adding user: ", e);
               setMessage("Error adding user.");
@@ -906,7 +1012,7 @@
                   await firebase.deleteDoc(firebase.doc(db, `artifacts/${appId}/public/data/bonuses`, doc.id));
               });
 
-              setMessage(translations.userDeletedSuccessfully);
+              setMessage(translations[language].userDeletedSuccessfully);
             } catch (e) {
               console.error("Error removing user: ", e);
               setMessage("Error deleting user.");
@@ -919,7 +1025,7 @@
                 ...updatedUser,
                 updatedAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.userUpdatedSuccessfully);
+              setMessage(translations[language].userUpdatedSuccessfully);
             } catch (e) {
               console.error("Error updating user: ", e);
               setMessage("Error updating user.");
@@ -937,7 +1043,7 @@
                 timestamp: firebase.serverTimestamp(),
                 addedBy,
               });
-              setMessage(translations.paymentAddedSuccessfully);
+              setMessage(translations[language].paymentAddedSuccessfully);
             } catch (e) {
               console.error("Error adding payment: ", e);
               setMessage("Error adding payment.");
@@ -950,7 +1056,7 @@
                 ...updatedPayment,
                 updatedAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.paymentUpdatedSuccessfully);
+              setMessage(translations[language].paymentUpdatedSuccessfully);
             } catch (e) {
               console.error("Error updating payment: ", e);
               setMessage("Error updating payment.");
@@ -966,7 +1072,7 @@
                 color,
                 createdAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.paymentMethodAddedSuccessfully);
+              setMessage(translations[language].paymentMethodAddedSuccessfully);
             } catch (e) {
               console.error("Error adding payment method: ", e);
               setMessage("Error adding payment method.");
@@ -979,7 +1085,7 @@
                 ...updatedMethod,
                 updatedAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.paymentMethodUpdatedSuccessfully);
+              setMessage(translations[language].paymentMethodUpdatedSuccessfully);
             } catch (e) {
               console.error("Error updating payment method: ", e);
               setMessage("Error updating payment method.");
@@ -989,7 +1095,7 @@
           const deletePaymentMethod = async (id) => {
             try {
               await firebase.deleteDoc(firebase.doc(db, `artifacts/${appId}/public/data/paymentMethods`, id));
-              setMessage(translations.paymentMethodDeletedSuccessfully);
+              setMessage(translations[language].paymentMethodDeletedSuccessfully);
             } catch (e) {
               console.error("Error deleting payment method: ", e);
               setMessage("Error deleting payment method.");
@@ -1008,7 +1114,7 @@
                 month: month, // Store month (0-indexed)
                 year: year, // Store full year
               });
-              setMessage(translations.expenseAddedSuccessfully);
+              setMessage(translations[language].expenseAddedSuccessfully);
             } catch (e) {
               console.error("Error adding expense: ", e);
               setMessage("Error adding expense.");
@@ -1024,7 +1130,7 @@
                 timestamp: updatedTimestamp,
                 updatedAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.expenseUpdatedSuccessfully);
+              setMessage(translations[language].expenseUpdatedSuccessfully);
             } catch (e) {
               console.error("Error updating expense: ", e);
               setMessage("Error updating expense.");
@@ -1034,7 +1140,7 @@
           const deleteExpense = async (id) => {
             try {
               await firebase.deleteDoc(firebase.doc(db, `artifacts/${appId}/public/data/expenses`, id));
-              setMessage(translations.expenseDeletedSuccessfully);
+              setMessage(translations[language].expenseDeletedSuccessfully);
             } catch (e) {
               console.error("Error deleting expense: ", e);
               setMessage("Error deleting expense.");
@@ -1052,7 +1158,7 @@
                 month: month, // Store month (0-indexed)
                 year: year, // Store full year
               });
-              setMessage(translations.bonusAddedSuccessfully);
+              setMessage(translations[language].bonusAddedSuccessfully);
             } catch (e) {
               console.error("Error adding bonus: ", e);
               setMessage("Error adding bonus.");
@@ -1068,7 +1174,7 @@
                 timestamp: updatedTimestamp,
                 updatedAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.bonusUpdatedSuccessfully);
+              setMessage(translations[language].bonusUpdatedSuccessfully);
             } catch (e) {
               console.error("Error updating bonus: ", e);
               setMessage("Error updating bonus.");
@@ -1078,7 +1184,7 @@
           const deleteBonus = async (id) => {
             try {
               await firebase.deleteDoc(firebase.doc(db, `artifacts/${appId}/public/data/bonuses`, id));
-              setMessage(translations.bonusDeletedSuccessfully);
+              setMessage(translations[language].bonusDeletedSuccessfully);
             } catch (e) {
               console.error("Error deleting bonus: ", e);
               setMessage("Error deleting bonus.");
@@ -1096,7 +1202,7 @@
                 month: month,
                 year: year,
               });
-              setMessage(translations.expenseAddedSuccessfully); // Re-using translation
+              setMessage(translations[language].expenseAddedSuccessfully); // Re-using translation
             } catch (e) {
               console.error("Error adding organization expense: ", e);
               setMessage("Error adding organization expense."); // Re-using translation
@@ -1111,7 +1217,7 @@
                 timestamp: updatedTimestamp,
                 updatedAt: firebase.serverTimestamp(),
               });
-              setMessage(translations.expenseUpdatedSuccessfully); // Re-using translation
+              setMessage(translations[language].expenseUpdatedSuccessfully); // Re-using translation
             } catch (e) {
               console.error("Error updating organization expense: ", e);
               setMessage("Error updating organization expense."); // Re-using translation
@@ -1121,7 +1227,7 @@
           const deleteOrganizationExpense = async (id) => {
             try {
               await firebase.deleteDoc(firebase.doc(db, `artifacts/${appId}/public/data/organizationExpenses`, id));
-              setMessage(translations.expenseDeletedSuccessfully); // Re-using translation
+              setMessage(translations[language].expenseDeletedSuccessfully); // Re-using translation
             } catch (e) {
               console.error("Error deleting organization expense: ", e);
               setMessage("Error deleting organization expense."); // Re-using translation
@@ -1150,7 +1256,8 @@
               organizationExpenses, // Provide organization expenses
               handleLogin,
               handleLogout,
-              changeUserPassword,
+              changeCurrentUserPassword, // User changes own password
+              adminResetUserPassword, // Admin resets other user's password
               addBranch,
               deleteBranch,
               editBranch,
@@ -1189,6 +1296,10 @@
               getPaymentMethodDetails: (methodName) => {
                 const method = paymentMethods.find(pm => pm.name === methodName);
                 return method ? (translations[language].language === 'ar' && method.nameAr ? method.nameAr : method.name) : methodName;
+              },
+              getUserDetails: (id) => { // Added getUserDetails to context
+                const user = users.find(u => u.id === id);
+                return user ? `${user.name} (${user.employeeNumber})` : 'N/A';
               },
               db, // Pass db for Excel upload Firestore operations
             }}>
@@ -1291,8 +1402,6 @@
                 return <SupervisorDashboard />;
               case 'employee':
                 return <EmployeeDashboard />;
-              case 'partner': // New Partner Dashboard
-                return <PartnerDashboard />;
               default:
                 return <Login />;
             }
@@ -1304,7 +1413,7 @@
                 <h1 className="text-2xl font-bold text-gray-800">{translations.appName}</h1>
                 <div className="flex items-center space-x-4">
                   <span className="text-gray-600">
-                    {translations.welcome} <span className="font-semibold">{currentUser.name}</span> ({currentUser.role === 'admin' ? translations.admin : currentUser.role === 'supervisor' ? translations.supervisor : currentUser.role === 'partner' ? translations.partner : translations.employeeRole})
+                    {translations.welcome} <span className="font-semibold">{currentUser.name}</span> ({currentUser.role === 'admin' ? translations.admin : currentUser.role === 'supervisor' ? translations.supervisor : translations.employeeRole})
                   </span>
                   <span className="text-sm text-gray-500">{userId}</span>
                   <div className="flex space-x-2">
@@ -1342,20 +1451,26 @@
         };
 
         // Utility function to export data to XLSX (tab-separated for Excel compatibility)
-        const exportToXLSX = (data, columns, fileNamePrefix, translations, getUserDetails, getBranchName, getPaymentMethodDetails) => {
+        const exportToXLSX = (data, columns, fileNamePrefix, translations, getUserDetails, getBranchName, getPaymentMethodDetails, users) => {
           if (data.length === 0) {
-            alert(translations.noPaymentsToDownload);
+            // Replaced alert with a more user-friendly message display
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = translations.noPaymentsToDownload;
+            messageDiv.className = 'fixed top-4 right-4 bg-red-500 text-white p-3 rounded-lg shadow-lg z-50';
+            document.body.appendChild(messageDiv);
+            setTimeout(() => document.body.removeChild(messageDiv), 3000);
             return;
           }
 
           const headers = columns.map(col => col.header);
           const xlsxRows = [];
-          xlsxRows.push(headers.join('\t'));
+          xlsxRows.push(headers.join('\t')); // Use tab for separation
 
           data.forEach(item => {
             const row = columns.map(col => {
               let value = '';
               if (col.render) {
+                // Special handling for rendered columns
                 if (col.key === 'employeeId' && getUserDetails) {
                   const user = users.find(u => u.id === item.employeeId);
                   value = user ? `${user.name} (${user.employeeNumber})` : 'N/A';
@@ -1366,10 +1481,10 @@
                   value = getBranchName(item.branchId);
                 } else if (col.key === 'timestamp') {
                   value = item.timestamp?.toLocaleString() || '';
-                } else if (col.key === 'amount' || col.key === 'totalAmount' || col.key === 'targetAmount' || col.key === 'expenseAmount' || col.key === 'bonusAmount' || col.key === 'totalExpenses' || col.key === 'totalBonuses' || col.key === 'netIncome') {
+                } else if (['amount', 'totalAmount', 'targetAmount', 'expenseAmount', 'bonusAmount', 'totalExpenses', 'totalBonuses', 'netIncome'].includes(col.key)) {
                   value = item[col.key]?.toFixed(2) || '0.00';
-                } else if (col.key === 'name') {
-                  value = `${item.name} / ${item.nameAr || item.name}`;
+                } else if (col.key === 'name' && item.nameAr) {
+                  value = `${item.name} / ${item.nameAr}`;
                 } else if (col.key === 'paymentMethod' && getPaymentMethodDetails) {
                   value = getPaymentMethodDetails(item.paymentMethod);
                 } else if (col.key === 'methods') {
@@ -1380,24 +1495,27 @@
                     value = item.imageUrl || '';
                 } else if (col.key === 'type' && translations[item.type]) { // For expense types
                     value = translations[item.type];
+                } else if (col.key === 'role' && translations[item.role]) { // For user roles
+                    value = translations[item.role];
                 }
                 else {
+                    // Fallback for other rendered columns if specific logic isn't defined
                     value = col.render(item);
                 }
               } else {
                 value = item[col.key];
               }
-              return `"${String(value).replace(/"/g, '""')}"`;
+              return String(value); // No double quotes, no escaping
             });
-            xlsxRows.push(row.join('\t'));
+            xlsxRows.push(row.join('\t')); // Use tab for separation
           });
 
-          const xlsxString = "\uFEFF" + xlsxRows.join('\n');
-          const blob = new Blob([xlsxString], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+          const xlsxString = "\uFEFF" + xlsxRows.join('\n'); // Add BOM for proper UTF-8 handling in Excel
+          const blob = new Blob([xlsxString], { type: 'text/tab-separated-values;charset=utf-8;' }); // Use TSV MIME type
           const now = new Date();
           const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
           const timeStr = now.toTimeString().split(' ')[0].substring(0, 5).replace(/:/g, '');
-          const fileName = `${fileNamePrefix}_${dateStr}_${timeStr}.xls`;
+          const fileName = `${fileNamePrefix}_${dateStr}_${timeStr}.xls`; // Keep .xls for Excel to open directly
 
           const link = document.createElement('a');
           link.href = URL.createObjectURL(blob);
@@ -1405,8 +1523,15 @@
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          alert(translations.paymentsDataDownloadedSuccessfully);
+
+          // Replaced alert with a more user-friendly message display
+          const messageDiv = document.createElement('div');
+          messageDiv.textContent = translations.paymentsDataDownloadedSuccessfully;
+          messageDiv.className = 'fixed top-4 right-4 bg-green-500 text-white p-3 rounded-lg shadow-lg z-50';
+          document.body.appendChild(messageDiv);
+          setTimeout(() => document.body.removeChild(messageDiv), 3000);
         };
+
 
         // Table component for reusability
         const PaginatedTable = ({
@@ -1755,7 +1880,7 @@
                         setSelectedPaymentMethodForBatch(e.target.value);
                         onApplyPaymentMethodToSelected(selectedItems, e.target.value);
                         setShowPaymentMethodDropdown(false); // Hide after selection
-                        setSelectedItems([]); // Clear selection
+                        onMultiSelectChange([]); // Clear selection
                       }}
                       className="p-2 border rounded-md"
                     >
@@ -1879,18 +2004,508 @@
             );
         };
 
+        // Helper for consistent timestamp conversion for Excel export
+        const convertTimestampForExcel = (firebaseTimestamp) => {
+            if (!firebaseTimestamp) return '';
+            if (typeof firebaseTimestamp.toDate === 'function') {
+                return firebaseTimestamp.toDate().toLocaleString(); // Use toLocaleString for readability in Excel
+            }
+            if (firebaseTimestamp instanceof Date) {
+                return firebaseTimestamp.toLocaleString();
+            }
+            return firebaseTimestamp; // Return as is if not a known timestamp type
+        };
+
+        // Function to download all data as JSON (backup)
+        const downloadAllDataAsJSON = async () => {
+            const { branches, users, payments, paymentMethods, expenses, bonuses, organizationExpenses, translations, setMessage } = useAppContext();
+            try {
+                const dataToExport = {
+                    branches: branches.map(b => ({
+                        ...b,
+                        createdAt: b.createdAt && typeof b.createdAt.toDate === 'function' ? b.createdAt.toDate().toISOString() : (b.createdAt instanceof Date ? b.createdAt.toISOString() : b.createdAt)
+                    })),
+                    users: users.map(u => ({
+                        ...u,
+                        createdAt: u.createdAt && typeof u.createdAt.toDate === 'function' ? u.createdAt.toDate().toISOString() : (u.createdAt instanceof Date ? u.createdAt.toISOString() : u.createdAt)
+                    })),
+                    payments: payments.map(p => ({
+                        ...p,
+                        timestamp: p.timestamp && typeof p.timestamp.toDate === 'function' ? p.timestamp.toDate().toISOString() : (p.timestamp instanceof Date ? p.timestamp.toISOString() : p.timestamp)
+                    })),
+                    paymentMethods: paymentMethods.map(pm => ({
+                        ...pm,
+                        createdAt: pm.createdAt && typeof pm.createdAt.toDate === 'function' ? pm.createdAt.toDate().toISOString() : (pm.createdAt instanceof Date ? pm.createdAt.toISOString() : pm.createdAt)
+                    })),
+                    expenses: expenses.map(ex => ({
+                        ...ex,
+                        timestamp: ex.timestamp && typeof ex.timestamp.toDate === 'function' ? ex.timestamp.toDate().toISOString() : (ex.timestamp instanceof Date ? ex.timestamp.toISOString() : ex.timestamp)
+                    })),
+                    bonuses: bonuses.map(bo => ({
+                        ...bo,
+                        timestamp: bo.timestamp && typeof bo.timestamp.toDate === 'function' ? bo.timestamp.toDate().toISOString() : (bo.timestamp instanceof Date ? bo.timestamp.toISOString() : bo.timestamp)
+                    })),
+                    organizationExpenses: organizationExpenses.map(oex => ({
+                        ...oex,
+                        timestamp: oex.timestamp && typeof oex.timestamp.toDate === 'function' ? oex.timestamp.toDate().toISOString() : (oex.timestamp instanceof Date ? oex.timestamp.toISOString() : oex.timestamp)
+                    })),
+                };
+                const jsonString = JSON.stringify(dataToExport, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8;' });
+                const now = new Date();
+                const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
+                const timeStr = now.toTimeString().split(' ')[0].substring(0, 5).replace(/:/g, '');
+                const fileName = `shop_app_backup_${dateStr}_${timeStr}.json`;
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setMessage(translations.allDataBackedUpSuccessfully);
+            } catch (error) {
+                console.error("Error backing up data:", error);
+                setMessage("Error backing up data.");
+            }
+        };
+
+        // Function to download all data as Excel (multiple workbooks)
+        const downloadAllDataAsExcel = () => {
+            const { branches, users, payments, paymentMethods, expenses, bonuses, organizationExpenses, translations, setMessage, getBranchName, getUserDetails, getPaymentMethodDetails } = useAppContext();
+            try {
+                const wb = XLSX.utils.book_new(); // Create a new workbook
+
+                // 1. Branches Sheet
+                const branchesData = branches.map((b, index) => ({ // Added index for serial number
+                    'Serial No.': index + 1, // Serial number
+                    ID: b.id,
+                    Name: translations.language === 'ar' && b.nameAr ? b.nameAr : b.name,
+                    Location: b.location,
+                    'Created At': convertTimestampForExcel(b.createdAt),
+                }));
+                const wsBranches = XLSX.utils.json_to_sheet(branchesData);
+                XLSX.utils.book_append_sheet(wb, wsBranches, translations.branchManagement);
+
+                // 2. Users Sheet
+                const usersData = users.map((u, index) => ({ // Added index for serial number
+                    'Serial No.': index + 1, // Serial number
+                    ID: u.id,
+                    Name: u.name,
+                    'Name (AR)': u.nameAr || '',
+                    'Employee Number': u.employeeNumber,
+                    Email: u.email,
+                    Role: translations[u.role] || u.role,
+                    Branch: getBranchName(u.branchId),
+                    'Target Amount (SAR)': u.targetAmount || 0,
+                    'Created At': convertTimestampForExcel(u.createdAt),
+                }));
+                const wsUsers = XLSX.utils.json_to_sheet(usersData);
+                XLSX.utils.book_append_sheet(wb, wsUsers, translations.userManagement);
+
+                // 3. Payments Sheet
+                const paymentsData = payments.map((p, index) => ({ // Added index for serial number
+                    'Serial No.': index + 1, // Serial number
+                    ID: p.id,
+                    Timestamp: convertTimestampForExcel(p.timestamp),
+                    Branch: getBranchName(p.branchId),
+                    Employee: getUserDetails(p.employeeId), // This already includes name and employee number
+                    Amount: p.amount,
+                    'Payment Method': getPaymentMethodDetails(p.paymentMethod),
+                    'Added By': getUserDetails(p.addedBy),
+                }));
+                const wsPayments = XLSX.utils.json_to_sheet(paymentsData);
+                XLSX.utils.book_append_sheet(wb, wsPayments, translations.realtimePayments);
+
+                // 4. Payment Methods Sheet
+                const paymentMethodsData = paymentMethods.map((pm, index) => ({ // Added index for serial number
+                    'Serial No.': index + 1, // Serial number
+                    ID: pm.id,
+                    Name: pm.name,
+                    'Name (AR)': pm.nameAr || '',
+                    Icon: pm.icon,
+                    Color: pm.color,
+                    'Created At': convertTimestampForExcel(pm.createdAt),
+                }));
+                const wsPaymentMethods = XLSX.utils.json_to_sheet(paymentMethodsData);
+                XLSX.utils.book_append_sheet(wb, wsPaymentMethods, translations.paymentMethodsManagement);
+
+                // 5. Expenses Sheet
+                const expensesData = expenses.map((ex, index) => ({ // Added index for serial number
+                    'Serial No.': index + 1, // Serial number
+                    ID: ex.id,
+                    Timestamp: convertTimestampForExcel(ex.timestamp),
+                    Employee: getUserDetails(ex.employeeId),
+                    Amount: ex.amount,
+                    Description: ex.description,
+                    Type: ex.type,
+                    Branch: getBranchName(ex.branchId),
+                    'Added By': getUserDetails(ex.addedBy),
+                }));
+                const wsExpenses = XLSX.utils.json_to_sheet(expensesData);
+                XLSX.utils.book_append_sheet(wb, wsExpenses, translations.expenses || 'Expenses'); // Fallback if translation missing
+
+                // 6. Bonuses Sheet
+                const bonusesData = bonuses.map((bo, index) => ({ // Added index for serial number
+                    'Serial No.': index + 1, // Serial number
+                    ID: bo.id,
+                    Timestamp: convertTimestampForExcel(bo.timestamp),
+                    Employee: getUserDetails(bo.employeeId),
+                    Amount: bo.amount,
+                    Description: bo.description,
+                    Branch: getBranchName(bo.branchId),
+                    'Added By': getUserDetails(bo.addedBy),
+                }));
+                const wsBonuses = XLSX.utils.json_to_sheet(bonusesData);
+                XLSX.utils.book_append_sheet(wb, wsBonuses, translations.bonuses || 'Bonuses'); // Fallback if translation missing
+
+                // 7. Organization Expenses Sheet
+                const organizationExpensesData = organizationExpenses.map((oex, index) => ({ // Added index for serial number
+                    'Serial No.': index + 1, // Serial number
+                    ID: oex.id,
+                    Timestamp: convertTimestampForExcel(oex.timestamp),
+                    Amount: oex.amount,
+                    Description: oex.description,
+                    Category: oex.type, // Assuming 'type' is the category for org expenses
+                    'Added By': getUserDetails(oex.addedBy), // Org expenses might not have addedBy, adjust if needed
+                }));
+                const wsOrgExpenses = XLSX.utils.json_to_sheet(organizationExpensesData);
+                XLSX.utils.book_append_sheet(wb, wsOrgExpenses, translations.organizationExpenses);
+
+                // Write the workbook
+                const now = new Date();
+                const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
+                const timeStr = now.toTimeString().split(' ')[0].substring(0, 5).replace(/:/g, '');
+                const fileName = `${translations.allDataBackup || 'ShopApp_All_Data'}_${dateStr}_${timeStr}.xlsx`; // Use a translated filename
+                XLSX.writeFile(wb, fileName);
+
+                setMessage(translations.allDataBackedUpSuccessfully); // Reuse this message
+            } catch (error) {
+                console.error("Error backing up data to Excel:", error);
+                setMessage("Error backing up data to Excel.");
+            }
+        };
+
+        // Function to download filtered payments as a single Excel sheet
+        const downloadFilteredPaymentsAsExcel = () => {
+            const { payments, translations, setMessage, getBranchName, getUserDetails, getPaymentMethodDetails } = useAppContext();
+            const { paymentFilters } = AdminDashboard.state || {}; // Access filters from AdminDashboard state if possible, or pass as prop
+
+            try {
+                const wb = XLSX.utils.book_new(); // Create a new workbook
+
+                // Apply filters to payments data
+                const filteredPayments = payments.filter(payment => {
+                    let match = true;
+                    // Assuming paymentFilters is accessible or passed
+                    if (paymentFilters.branchId && paymentFilters.branchId !== 'all') {
+                        match = match && payment.branchId === paymentFilters.branchId;
+                    }
+                    if (paymentFilters.employeeId && paymentFilters.employeeId !== 'all') {
+                        match = match && payment.employeeId === paymentFilters.employeeId;
+                    }
+                    if (paymentFilters.paymentMethod && paymentFilters.paymentMethod !== 'all') {
+                        match = match && payment.paymentMethod === paymentFilters.paymentMethod;
+                    }
+                    // Add date range filtering if needed, similar to other dashboards
+                    if (paymentFilters.startDate && payment.timestamp) {
+                        const paymentDate = new Date(payment.timestamp.toDate ? payment.timestamp.toDate() : payment.timestamp);
+                        const fromDate = new Date(paymentFilters.startDate);
+                        match = match && paymentDate >= fromDate;
+                    }
+                    if (paymentFilters.endDate && payment.timestamp) {
+                        const paymentDate = new Date(payment.timestamp.toDate ? payment.timestamp.toDate() : payment.timestamp);
+                        const toDate = new Date(paymentFilters.endDate);
+                        // Set to end of day for inclusive range
+                        toDate.setHours(23, 59, 59, 999);
+                        match = match && paymentDate <= toDate;
+                    }
+                    if (paymentFilters.filterYear && payment.timestamp) {
+                        match = match && new Date(payment.timestamp).getFullYear() === parseInt(paymentFilters.filterYear);
+                    }
+                    if (paymentFilters.filterMonth !== undefined && paymentFilters.filterMonth !== null && paymentFilters.filterMonth !== '' && payment.timestamp) {
+                        match = match && new Date(payment.timestamp).getMonth() === parseInt(paymentFilters.filterMonth);
+                    }
+                    if (paymentFilters.filterDay && payment.timestamp) {
+                        match = match && new Date(payment.timestamp).getDate() === parseInt(paymentFilters.filterDay);
+                    }
+                    return match;
+                });
+
+                // Prepare data for the Excel sheet, similar to the payments sheet in downloadAllDataAsExcel
+                const paymentsDataForExcel = filteredPayments.map((p, index) => ({ // Added index for serial number
+                    'Serial No.': index + 1, // Serial number
+                    ID: p.id,
+                    Timestamp: convertTimestampForExcel(p.timestamp),
+                    Branch: getBranchName(p.branchId),
+                    Employee: getUserDetails(p.employeeId),
+                    Amount: p.amount,
+                    'Payment Method': getPaymentMethodDetails(p.paymentMethod),
+                    'Added By': getUserDetails(p.addedBy),
+                }));
+
+                const wsPayments = XLSX.utils.json_to_sheet(paymentsDataForExcel);
+                XLSX.utils.book_append_sheet(wb, wsPayments, translations.realtimePayments || 'Filtered Payments'); // Sheet name
+
+                const now = new Date();
+                const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
+                const timeStr = now.toTimeString().split(' ')[0].substring(0, 5).replace(/:/g, '');
+                const fileName = `${translations.filteredPaymentsExport || 'Filtered_Payments'}_${dateStr}_${timeStr}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+
+                setMessage(translations.paymentsDataDownloadedSuccessfully || 'Filtered payments data downloaded successfully!');
+            } catch (error) {
+                console.error("Error backing up filtered payments data to Excel:", error);
+                setMessage("Error backing up filtered payments data to Excel.");
+            }
+        };
+
+
+        // Function to download a sample user Excel template
+        const downloadSampleUserExcel = () => {
+            const { translations, setMessage } = useAppContext();
+            try {
+                const wb = XLSX.utils.book_new();
+                const headers = [
+                    translations.name,
+                    translations.nameAr, // Assuming you want both for import
+                    translations.employeeNo,
+                    translations.emailPlaceholder, // "Email"
+                    translations.role, // e.g., 'admin', 'employee', 'manager'
+                    translations.branch, // Branch Name (will need to map to ID on upload)
+                    translations.target, // Target Amount
+                    translations.password, // Placeholder for password (will be auto-generated or handled securely)
+                    "Image URL" // Optional
+                ];
+
+                const ws = XLSX.utils.aoa_to_sheet([headers]); // Create sheet from array of arrays
+
+                // Add a sample row with hints/example data
+                XLSX.utils.sheet_add_aoa(ws, [
+                    ['John Doe', 'جون دو', 'EMP001', 'john.doe@example.com', 'employee', 'Main Branch', 5000, 'SecurePassword123', 'https://example.com/john.jpg'],
+                    ['Jane Smith', 'جين سميث', 'EMP002', 'jane.smith@example.com', 'manager', 'Downtown', 10000, 'AnotherSecurePass', '']
+                ], { origin: -1 }); // -1 means append after last row
+
+                // Optional: Add some basic column width
+                ws['!cols'] = [
+                    { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 25 },
+                    { wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 30 }
+                ];
+
+                XLSX.utils.book_append_sheet(wb, ws, translations.userTemplate || 'User Import Template');
+
+                const fileName = translations.userTemplateFileName || 'user_import_template.xlsx';
+                XLSX.writeFile(wb, fileName);
+                setMessage(translations.userTemplateDownloaded || 'User import template downloaded successfully!');
+            } catch (error) {
+                console.error("Error downloading sample user Excel:", error);
+                setMessage(translations.errorDownloadingTemplate || "Error downloading user template.");
+            }
+        };
+
+        // Function to handle user Excel upload
+        const handleUserExcelUpload = async (event, fileInputRef) => {
+            const { users, branches, addUser, translations, setMessage, db, appId } = useAppContext();
+            const file = event.target.files[0];
+            if (!file) {
+              return;
+            }
+
+            if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                setMessage(translations.invalidExcelFile || 'Please upload a valid Excel file (.xlsx or .xls).');
+                return;
+            }
+
+            // setUploadErrors([]); // This state is in AdminDashboard, not globally accessible here
+            setMessage(translations.processingUpload || 'Processing upload...');
+
+            try {
+                const data = await file.arrayBuffer();
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); // Get data as array of arrays
+
+                if (jsonData.length <= 1) { // Only header row or empty
+                    setMessage(translations.emptyExcelFile || 'The uploaded Excel file is empty or contains only headers.');
+                    return;
+                }
+
+                const headers = jsonData[0].map(h => h.trim()); // Get headers from the first row
+                const usersToProcess = [];
+                const currentEmails = new Set(users.map(u => u.email.toLowerCase()));
+                const currentEmployeeNumbers = new Set(users.map(u => u.employeeNumber?.toLowerCase()).filter(Boolean)); // Filter out undefined/null
+
+                const emailCol = headers.indexOf(translations.emailPlaceholder);
+                const employeeNoCol = headers.indexOf(translations.employeeNo);
+                const nameCol = headers.indexOf(translations.name);
+                const nameArCol = headers.indexOf(translations.nameAr);
+                const roleCol = headers.indexOf(translations.role);
+                const branchCol = headers.indexOf(translations.branch);
+                const targetCol = headers.indexOf(translations.target);
+                const passwordCol = headers.indexOf(translations.password);
+                const imageUrlCol = headers.indexOf("Image URL"); // Assuming this exact header
+
+                const newUploadErrors = [];
+                // const successfulImports = []; // Not used
+
+                // Fetch all branches to map names to IDs
+                const branchNameToIdMap = {};
+                branches.forEach(b => {
+                    branchNameToIdMap[b.name.toLowerCase()] = b.id;
+                    if (b.nameAr) {
+                        branchNameToIdMap[b.nameAr.toLowerCase()] = b.id;
+                    }
+                });
+
+
+                for (let i = 1; i < jsonData.length; i++) { // Start from second row (skip headers)
+                    const row = jsonData[i];
+                    const rowNumber = i + 1;
+                    const errorsInRow = [];
+
+                    const name = row[nameCol] || '';
+                    const nameAr = row[nameArCol] || '';
+                    const employeeNumber = (row[employeeNoCol] || '').toString().trim();
+                    const email = (row[emailCol] || '').toLowerCase().trim();
+                    const role = (row[roleCol] || '').toLowerCase().trim();
+                    const branchName = (row[branchCol] || '').trim();
+                    const targetAmount = parseFloat(row[targetCol]) || 0;
+                    const password = row[passwordCol] || '';
+                    const imageUrl = row[imageUrlCol] || '';
+
+                    // --- Data Validation ---
+                    if (!name) errorsInRow.push(translations.nameRequired);
+                    if (!employeeNumber) errorsInRow.push(translations.employeeNoRequired);
+                    if (!email) {
+                        errorsInRow.push(translations.emailRequired);
+                    } else if (!/\S+@\S+\.\S+/.test(email)) {
+                        errorsInRow.push(translations.invalidEmailFormat);
+                    } else if (currentEmails.has(email)) {
+                        errorsInRow.push(translations.emailAlreadyExists);
+                    } else {
+                        currentEmails.add(email); // Add to local set for current batch validation
+                    }
+
+                    if (!employeeNumber) {
+                        errorsInRow.push(translations.employeeNoRequired);
+                    } else if (currentEmployeeNumbers.has(employeeNumber.toLowerCase())) {
+                        errorsInRow.push(translations.employeeNoAlreadyExists);
+                    } else {
+                        currentEmployeeNumbers.add(employeeNumber.toLowerCase()); // Add to local set for current batch validation
+                    }
+
+                    // Basic role validation (adjust based on your actual roles)
+                    const validRoles = ['admin', 'employee', 'supervisor', 'manager', 'partner']; // Ensure these match your system
+                    if (!role || !validRoles.includes(role)) {
+                        errorsInRow.push(`${translations.invalidRole} (${validRoles.join(', ')})`);
+                    }
+
+                    // Branch validation
+                    const branchId = branchNameToIdMap[branchName.toLowerCase()];
+                    if (!branchId && role !== 'admin') { // Admins might not have a branchId
+                        errorsInRow.push(translations.invalidBranchName);
+                    }
+
+                    if (isNaN(targetAmount) || targetAmount < 0) {
+                        errorsInRow.push(translations.invalidTargetAmount);
+                    }
+
+                    // Password validation (simple check, strong validation should be on server)
+                    // Only require password for NEW users or if explicitly provided for existing
+                    // This logic might need adjustment if users are edited via Excel or if passwords are not directly handled client-side
+                    // For now, assuming password is for new users and should be present
+                    if (!password) { // Password required for new users
+                        errorsInRow.push(translations.passwordRequiredForNewUser);
+                    } else if (password && password.length < 6) { // Minimum length
+                        errorsInRow.push(translations.passwordTooShort);
+                    }
+
+
+                    if (errorsInRow.length > 0) {
+                        newUploadErrors.push(`Row ${rowNumber}: ${errorsInRow.join('; ')}`);
+                    } else {
+                        usersToProcess.push({
+                            name,
+                            nameAr,
+                            employeeNumber,
+                            email,
+                            role,
+                            branchId: branchId || '', // Pass branchId or empty string
+                            targetAmount,
+                            password, // Pass for server-side hashing
+                            imageUrl
+                        });
+                    }
+                }
+
+                // setUploadErrors(newUploadErrors); // This state is in AdminDashboard
+
+                if (newUploadErrors.length > 0) {
+                    setMessage(`${translations.uploadCompletedWithErrors || 'Upload completed with errors.'} ${newUploadErrors.length} rows had issues.`);
+                } else {
+                    setMessage(translations.importingUsers || 'Importing users...');
+                    let successfullyAddedCount = 0;
+                    let failedAddCount = 0;
+                    for (const userData of usersToProcess) {
+                        try {
+                            // Call your existing addUser function from useAppContext
+                            // It should handle uniqueness and potentially update if user exists by email/emp number (though current addUser only adds)
+                            await addUser(
+                                userData.name,
+                                userData.email,
+                                userData.role,
+                                userData.branchId,
+                                userData.targetAmount,
+                                userData.employeeNumber,
+                                userData.nameAr,
+                                userData.imageUrl,
+                                userData.password // Pass the password to addUser
+                            );
+                            successfullyAddedCount++;
+                        } catch (addError) {
+                            console.error("Error adding user from Excel:", userData.email, addError);
+                            newUploadErrors.push(`Failed to add ${userData.email} (Row ${usersToProcess.indexOf(userData) + 2}): ${addError.message || 'Unknown error'}`);
+                            failedAddCount++;
+                        }
+                    }
+
+                    // setUploadErrors(prevErrors => [...prevErrors, ...newUploadErrors]); // This state is in AdminDashboard
+
+                    if (successfullyAddedCount > 0) {
+                        setMessage(`${translations.usersImportedSuccessfully || 'Users imported successfully!'}: ${successfullyAddedCount} ${translations.newUsersAdded || 'new users added'}.`);
+                    } else if (newUploadErrors.length === 0) {
+                        setMessage(translations.noNewUsersProcessed || 'No new users were processed from the file. It might contain only existing data.');
+                    } else {
+                        setMessage(`Upload finished with ${failedAddCount} failures and ${successfullyAddedCount} successes.`);
+                    }
+
+                    // Reset file input value to allow uploading the same file again if needed
+                    if (fileInputRef.current) {
+                        fileInputRef.current.value = '';
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error reading Excel file:", error);
+                setMessage(translations.errorReadingExcelFile || "Error reading Excel file. Please ensure it's valid.");
+                // setUploadErrors([`${translations.generalError}: ${error.message || 'Unknown error'}`]); // This state is in AdminDashboard
+            }
+        };
+
+
         // Admin Dashboard Component
         const AdminDashboard = ({ adminPage, setAdminPage }) => {
           const {
             users, branches, payments, paymentMethods, expenses, bonuses, organizationExpenses,
             addBranch, deleteBranch, editBranch,
-            addUser, deleteUser, editUser, changeUserPassword,
-            addPayment, editPayment,
+            addUser, deleteUser, editUser, adminResetUserPassword, // Changed to adminResetUserPassword
+            addPayment, editPayment, deletePayment,
             addPaymentMethod, editPaymentMethod, deletePaymentMethod,
             addExpense, editExpense, deleteExpense,
             addBonus, editBonus, deleteBonus,
             addOrganizationExpense, editOrganizationExpense, deleteOrganizationExpense,
-            translations, appId, userId, setMessage, db
+            translations, appId, userId, setMessage, db,
+            getBranchName, getPaymentMethodDetails, getUserDetails
           } = useAppContext();
 
           const [isBranchModalOpen, setIsBranchModalOpen] = useState(false);
@@ -1927,6 +2542,15 @@
           const [adminRecordsPerPage, setAdminRecordsPerPage] = useState(15);
           const [adminTableTheme, setAdminTableTheme] = useState('default');
 
+          // State for selected items in tables for batch operations
+          const [selectedPaymentIds, setSelectedPaymentIds] = useState([]);
+          const [selectedUserIds, setSelectedUserIds] = useState([]);
+          const [selectedBranchIds, setSelectedBranchIds] = useState([]);
+
+          // State for upload file and errors
+          const [uploadErrors, setUploadErrors] = useState([]);
+          const fileInputRef = useRef(null); // Ref for file input element
+
 
           const handleFilterChange = (filterKey, value) => {
               setPaymentFilters(prev => ({ ...prev, [filterKey]: value }));
@@ -1936,27 +2560,9 @@
               setPaymentFilters({});
           };
 
-          // Utility function to get user's name by ID
-          const getUserDetails = (id) => {
-            const user = users.find(u => u.id === id);
-            return user ? `${user.name} (${user.employeeNumber})` : 'N/A';
-          };
-
           const getEmployeeName = (id) => {
             const user = users.find(u => u.id === id);
             return user ? (translations.language === 'ar' && user.nameAr ? user.nameAr : user.name) : 'N/A';
-          };
-
-          // Utility function to get branch name by ID
-          const getBranchName = (id) => {
-            const branch = branches.find(b => b.id === id);
-            return branch ? branch.name : 'N/A';
-          };
-
-          // Utility function to get payment method name by ID
-          const getPaymentMethodDetails = (methodName) => {
-              const method = paymentMethods.find(pm => pm.name === methodName);
-              return method ? (translations.language === 'ar' && method.nameAr ? method.nameAr : method.name) : methodName;
           };
 
           // Columns for payments table in Admin dashboard
@@ -2012,8 +2618,27 @@
             },
           ];
 
-          // Columns for users table
+          // Columns for users table - MODIFIED FOR MULTI-SELECT
           const userColumns = [
+            {
+                header: ( // Checkbox header for "Select All"
+                    <input
+                        type="checkbox"
+                        onChange={handleSelectAllUsers}
+                        checked={selectedUserIds.length === users.length && users.length > 0}
+                    />
+                ),
+                key: 'select',
+                sortable: false,
+                render: (user) => (
+                    <input
+                        type="checkbox"
+                        className="user-select-checkbox" // Added class for easy selection
+                        checked={selectedUserIds.includes(user.id)}
+                        onChange={() => toggleUserSelection(user.id)}
+                    />
+                )
+            },
             { header: translations.name, key: 'name', render: (user) => `${user.name} / ${user.nameAr || user.name}` },
             { header: translations.employeeNo, key: 'employeeNumber' },
             { header: translations.emailPlaceholder, key: 'email' },
@@ -2044,6 +2669,46 @@
             },
           ];
 
+          // Multi-select Toggle Function
+          const toggleUserSelection = (userId) => {
+            setSelectedUserIds(prevSelected =>
+              prevSelected.includes(userId)
+                ? prevSelected.filter(id => id !== userId)
+                : [...prevSelected, userId]
+            );
+          };
+
+          // Handle "Select All" for users
+          const handleSelectAllUsers = (e) => {
+            if (e.target.checked) {
+              setSelectedUserIds(users.map(user => user.id));
+            } else {
+              setSelectedUserIds([]);
+            }
+          };
+
+          // Function to delete selected users
+          const handleDeleteSelectedUsers = async () => {
+            if (selectedUserIds.length === 0) {
+              setMessage(translations.noUsersSelectedForDeletion || "No users selected for deletion.");
+              return;
+            }
+
+            if (confirm(translations.confirmDeleteSelectedUsers || `Are you sure you want to delete ${selectedUserIds.length} selected users?`)) {
+              try {
+                for (const userId of selectedUserIds) {
+                  await deleteUser(userId);
+                }
+                setMessage(`${selectedUserIds.length} ${translations.usersDeletedSuccessfully || 'users deleted successfully!'}`);
+                setSelectedUserIds([]); // Clear selection after deletion
+              } catch (error) {
+                console.error("Error deleting selected users:", error);
+                setMessage(translations.errorDeletingUsers || "Error deleting users. Please try again.");
+              }
+            }
+          };
+
+
           // Columns for payment methods table
           const paymentMethodColumns = [
               { header: translations.name, key: 'name', render: (method) => `${method.name} / ${method.nameAr || method.name}` },
@@ -2072,37 +2737,6 @@
               },
           ];
 
-          // Function to download all data as JSON (backup)
-          const downloadAllDataAsJSON = async () => {
-              try {
-                  const dataToExport = {
-                      branches: branches.map(b => ({ ...b, createdAt: b.createdAt?.toDate().toISOString() })),
-                      users: users.map(u => ({ ...u, createdAt: u.createdAt?.toDate().toISOString() })),
-                      payments: payments.map(p => ({ ...p, timestamp: p.timestamp?.toISOString() })),
-                      paymentMethods: paymentMethods.map(pm => ({ ...pm, createdAt: pm.createdAt?.toDate().toISOString() })),
-                      expenses: expenses.map(ex => ({ ...ex, timestamp: ex.timestamp?.toDate().toISOString() })),
-                      bonuses: bonuses.map(bo => ({ ...bo, timestamp: bo.timestamp?.toDate().toISOString() })),
-                      organizationExpenses: organizationExpenses.map(oex => ({ ...oex, timestamp: oex.timestamp?.toDate().toISOString() })),
-                  };
-                  const jsonString = JSON.stringify(dataToExport, null, 2);
-                  const blob = new Blob([jsonString], { type: 'application/json;charset=utf-8;' });
-                  const now = new Date();
-                  const dateStr = now.toISOString().split('T')[0].replace(/-/g, '');
-                  const timeStr = now.toTimeString().split(' ')[0].substring(0, 5).replace(/:/g, '');
-                  const fileName = `shop_app_backup_${dateStr}_${timeStr}.json`;
-                  const link = document.createElement('a');
-                  link.href = URL.createObjectURL(blob);
-                  link.setAttribute('download', fileName);
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                  setMessage(translations.allDataBackedUpSuccessfully);
-              } catch (error) {
-                  console.error("Error backing up data:", error);
-                  setMessage("Error backing up data.");
-              }
-          };
-
           const months = [
                 translations.jan, translations.feb, translations.mar, translations.apr, translations.may, translations.jun,
                 translations.jul, translations.aug, translations.sep, translations.oct, translations.nov, translations.dec
@@ -2126,36 +2760,24 @@
                 >
                   {translations.realtimePayments}
                 </button>
-                {/* Grouped Management Button */}
-                <div className="relative group">
-                    <button
-                        className={`px-4 py-2 rounded-lg font-semibold transition duration-300 shadow-md
-                            ${['branches', 'users', 'paymentMethods'].includes(adminPage) ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}
-                        `}
-                    >
-                        {translations.manageUsersBranchesPayments}
-                    </button>
-                    <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                        <button
-                            onClick={() => setAdminPage('branches')}
-                            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                        >
-                            {translations.branchManagement}
-                        </button>
-                        <button
-                            onClick={() => setAdminPage('users')}
-                            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                        >
-                            {translations.userManagement}
-                        </button>
-                        <button
-                            onClick={() => setAdminPage('paymentMethods')}
-                            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                        >
-                            {translations.paymentMethodsManagement}
-                        </button>
-                    </div>
-                </div>
+                <button
+                    onClick={() => setAdminPage('branches')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition duration-300 shadow-md ${adminPage === 'branches' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                >
+                    {translations.branchManagement}
+                </button>
+                <button
+                    onClick={() => setAdminPage('users')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition duration-300 shadow-md ${adminPage === 'users' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                >
+                    {translations.userManagement}
+                </button>
+                <button
+                    onClick={() => setAdminPage('paymentMethods')}
+                    className={`px-4 py-2 rounded-lg font-semibold transition duration-300 shadow-md ${adminPage === 'paymentMethods' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                >
+                    {translations.paymentMethodsManagement}
+                </button>
                 <button
                     onClick={() => setAdminPage('employeeFinancials')}
                     className={`px-4 py-2 rounded-lg font-semibold transition duration-300 shadow-md ${adminPage === 'employeeFinancials' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
@@ -2172,7 +2794,13 @@
                   onClick={downloadAllDataAsJSON}
                   className="bg-purple-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-600 transition duration-300 shadow-md"
                 >
-                  {translations.downloadAllDataXLSX}
+                  {translations.downloadAllDataJSON}
+                </button>
+                <button
+                  onClick={downloadAllDataAsExcel}
+                  className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition duration-300 shadow-md"
+                >
+                  {translations.downloadAllDataExcel}
                 </button>
               </nav>
 
@@ -2319,7 +2947,7 @@
                     data={payments}
                     columns={adminPaymentColumns}
                     searchPlaceholder={translations.search + ' ' + translations.employee + '...'}
-                    downloadXLSX={() => exportToXLSX(payments, adminPaymentColumns.filter(col => col.key !== 'actions'), 'All_Payments', translations, getUserDetails, getBranchName, getPaymentMethodDetails)}
+                    downloadXLSX={downloadFilteredPaymentsAsExcel}
                     translations={translations}
                     getUserDetails={getUserDetails}
                     getBranchName={getBranchName}
@@ -2332,29 +2960,32 @@
                     currentFilters={paymentFilters}
                     recordsPerPageSetting={adminRecordsPerPage}
                     tableTheme={adminTableTheme}
-                    showMultiSelect={true} // Enable multi-select for this table
+                    showMultiSelect={true}
+                    selectedItems={selectedPaymentIds}
+                    onMultiSelectChange={setSelectedPaymentIds}
                     onDeleteSelected={async (ids) => {
-                        if (confirm(`Are you sure you want to delete ${ids.length} payments?`)) {
+                        const confirmed = window.confirm(translations.confirmDeletePaymentMethod);
+                        if (confirmed) {
                             for (const id of ids) {
                                 await deletePayment(id);
                             }
                             setMessage(`${ids.length} payments deleted successfully!`);
-                            // Clear selection after deletion
-                            // This is handled by the PaginatedTable component itself now
+                            setSelectedPaymentIds([]);
                         }
                     }}
                     onApplyPaymentMethodToSelected={async (ids, newMethod) => {
-                        if (confirm(`Are you sure you want to change payment method for ${ids.length} payments to ${newMethod}?`)) {
+                        if (confirm(`Are you sure you want to change payment method for ${ids.length} payments to ${getPaymentMethodDetails(newMethod)}?`)) {
                             for (const id of ids) {
                                 await editPayment(id, { paymentMethod: newMethod });
                             }
                             setMessage(`Payment method updated for ${ids.length} payments!`);
+                            setSelectedPaymentIds([]);
                         }
                     }}
                   />
 
                     <Modal
-                        title={`${translations.editPaymentModalTitle} ${editingPayment?.paymentNumber})`}
+                        title={`${translations.editPaymentModalTitle} ${editingPayment?.paymentNumber || ''})`}
                         isOpen={isPaymentModalOpen}
                         onClose={() => { setIsPaymentModalOpen(false); setEditingPayment(null); }}
                     >
@@ -2397,6 +3028,18 @@
                     translations={translations}
                     recordsPerPageSetting={adminRecordsPerPage}
                     tableTheme={adminTableTheme}
+                    showMultiSelect={true}
+                    selectedItems={selectedBranchIds}
+                    onMultiSelectChange={setSelectedBranchIds}
+                    onDeleteSelected={async (ids) => {
+                        if (confirm(`Are you sure you want to delete ${ids.length} branches and all associated data?`)) {
+                            for (const id of ids) {
+                                await deleteBranch(id);
+                            }
+                            setMessage(`${ids.length} branches deleted successfully!`);
+                            setSelectedBranchIds([]);
+                        }
+                    }}
                   />
 
                   <Modal
@@ -2424,15 +3067,51 @@
 
               {adminPage === 'users' && (
                 <div className="bg-white p-6 rounded-lg shadow-lg">
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
                     <h3 className="text-2xl font-semibold text-gray-800">{translations.userManagement}</h3>
-                    <button
-                      onClick={() => { setEditingUser(null); setIsUserModalOpen(true); }}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 shadow-md"
-                    >
-                      {translations.addUser}
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={downloadSampleUserExcel}
+                            className="bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition duration-300 shadow-md"
+                        >
+                            {translations.downloadUserTemplate}
+                        </button>
+                        <label className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-300 shadow-md cursor-pointer">
+                            {translations.uploadUserExcel}
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                className="hidden"
+                                accept=".xlsx, .xls"
+                                onChange={(e) => handleUserExcelUpload(e, fileInputRef)}
+                            />
+                        </label>
+                        <button
+                            onClick={() => { setEditingUser(null); setIsUserModalOpen(true); }}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 shadow-md"
+                        >
+                            {translations.addUser}
+                        </button>
+                    </div>
                   </div>
+                  {uploadErrors.length > 0 && (
+                      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                          <strong className="font-bold">{translations.uploadErrorsDetected}</strong>
+                          <ul className="mt-2 list-disc list-inside">
+                              {uploadErrors.map((error, index) => (
+                                  <li key={index}>{error}</li>
+                              ))}
+                          </ul>
+                      </div>
+                  )}
+                  {selectedUserIds.length > 0 && (
+                      <button
+                          onClick={handleDeleteSelectedUsers}
+                          className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition duration-300 shadow-md"
+                      >
+                          {translations.deleteSelectedUsers} ({selectedUserIds.length})
+                      </button>
+                  )}
                   <PaginatedTable
                     data={users}
                     columns={userColumns}
@@ -2441,6 +3120,9 @@
                     getBranchName={getBranchName}
                     recordsPerPageSetting={adminRecordsPerPage}
                     tableTheme={adminTableTheme}
+                    showMultiSelect={true}
+                    selectedItems={selectedUserIds}
+                    onMultiSelectChange={setSelectedUserIds}
                   />
 
                   <Modal
@@ -2463,7 +3145,7 @@
                       branches={branches}
                       translations={translations}
                       setMessage={setMessage}
-                      changeUserPassword={changeUserPassword}
+                      adminResetUserPassword={adminResetUserPassword}
                     />
                   </Modal>
                 </div>
@@ -2526,11 +3208,11 @@
                       deleteBonus={deleteBonus}
                       translations={translations}
                       setMessage={setMessage}
-                      selectedMonth={financialsMonth} // Pass month/year to financial controls
+                      selectedMonth={financialsMonth}
                       selectedYear={financialsYear}
-                      setFinancialsMonth={setFinancialsMonth} // Allow changing month/year from here
+                      setFinancialsMonth={setFinancialsMonth}
                       setFinancialsYear={setFinancialsYear}
-                      appId={appId} // Pass appId for Firestore operations
+                      appId={appId}
                       recordsPerPageSetting={adminRecordsPerPage}
                       tableTheme={adminTableTheme}
                   />
@@ -2538,7 +3220,7 @@
 
               {adminPage === 'organizationExpenses' && (
                   <OrganizationExpensesDashboard
-                      payments={payments} // Pass all payments to calculate total income
+                      payments={payments}
                       organizationExpenses={organizationExpenses}
                       addOrganizationExpense={addOrganizationExpense}
                       editOrganizationExpense={editOrganizationExpense}
@@ -2947,7 +3629,7 @@
           );
         };
 
-        const UserForm = ({ user, onSave, onCancel, branches, translations, setMessage, changeUserPassword }) => {
+        const UserForm = ({ user, onSave, onCancel, branches, translations, setMessage, adminResetUserPassword }) => {
           const [name, setName] = useState(user?.name || '');
           const [nameAr, setNameAr] = useState(user?.nameAr || '');
           const [email, setEmail] = useState(user?.email || '');
@@ -2982,7 +3664,7 @@
             });
           };
 
-          const handlePasswordChange = async () => {
+          const handlePasswordReset = async () => {
               if (!newPassword || !confirmPassword) {
                   setMessage(translations.pleaseFillAllFields);
                   return;
@@ -2992,7 +3674,8 @@
                   return;
               }
               if (user && user.id) {
-                  const success = await changeUserPassword(user.id, newPassword);
+                  // Admin reset function
+                  const success = await adminResetUserPassword(user.id, newPassword);
                   if (success) {
                       setNewPassword('');
                       setConfirmPassword('');
@@ -3080,7 +3763,6 @@
                   <option value="admin">{translations.admin}</option>
                   <option value="supervisor">{translations.supervisor}</option>
                   <option value="employee">{translations.employeeRole}</option>
-                  <option value="partner">{translations.partner}</option>
                 </select>
               </div>
               {(role === 'supervisor' || role === 'employee') && (
@@ -3176,7 +3858,7 @@
                       </div>
                       <button
                           type="button"
-                          onClick={handlePasswordChange}
+                          onClick={handlePasswordReset}
                           className="w-full bg-orange-500 text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition duration-300"
                       >
                           {translations.changePassword}
@@ -3368,13 +4050,13 @@
                         <button
                             type="button"
                             onClick={onCancel}
-                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400 transition duration-300"
+                            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400"
                         >
                             {translations.cancel}
                         </button>
                         <button
                             type="submit"
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700"
                         >
                             {translations.saveChanges}
                         </button>
@@ -3389,12 +4071,10 @@
           const { currentUser, users, payments, paymentMethods, addPayment, translations, setMessage } = useAppContext();
           const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
           const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
-          const [paymentAmount, setPaymentAmount] = useState('');
           const [last5Payments, setLast5Payments] = useState([]);
           const [approvedFlash, setApprovedFlash] = useState(false);
           const [isNumpadOpen, setIsNumpadOpen] = useState(false);
           const [currentNumpadValue, setCurrentNumpadValue] = useState('');
-          const numpadRef = useRef(null);
 
           const employeesInBranch = users.filter(user => user.branchId === currentUser.branchId && user.role === 'employee');
 
@@ -3413,23 +4093,12 @@
           const handleEmployeeSelect = (employeeId) => {
               setSelectedEmployeeId(employeeId);
               setSelectedPaymentMethod(''); // Reset payment method when employee changes
-              setPaymentAmount(''); // Reset amount
+              setCurrentNumpadValue(''); // Reset amount
               setIsNumpadOpen(false); // Close numpad
           };
 
-          const handlePaymentMethodClick = (methodName, color) => {
+          const handlePaymentMethodClick = (methodName) => {
               setSelectedPaymentMethod(methodName);
-              // Flash effect
-              const btn = document.querySelector(`[data-method="${methodName}"]`);
-              if (btn) {
-                  btn.style.transition = 'background-color 0.1s, border-color 0.1s';
-                  btn.style.borderColor = 'green'; // Dark green border
-                  btn.style.borderWidth = '3px';
-                  setTimeout(() => {
-                      btn.style.borderColor = ''; // Reset border
-                      btn.style.borderWidth = '';
-                  }, 500);
-              }
               setCurrentNumpadValue(''); // Reset numpad value
               setIsNumpadOpen(true);
           };
@@ -3443,12 +4112,11 @@
               await addPayment(currentUser.branchId, selectedEmployeeId, amount, selectedPaymentMethod, currentUser.id);
               setMessage(translations.paymentAddedSuccessfully);
               setApprovedFlash(true);
-              setTimeout(() => setApprovedFlash(false), 500); // Flash for 0.5 seconds
+              setTimeout(() => setApprovedFlash(false), 1500); // Flash for 1.5 seconds
 
               // Reset fields after successful payment
               setSelectedEmployeeId('');
               setSelectedPaymentMethod('');
-              setPaymentAmount('');
               setCurrentNumpadValue('');
               setIsNumpadOpen(false);
           };
@@ -3463,6 +4131,7 @@
               setCurrentNumpadValue(prev => {
                   if (value === '.' && prev.includes('.')) return prev;
                   if (prev === '0' && value !== '.') return value;
+                  if (prev.includes('.') && prev.split('.')[1].length >= 2) return prev; // Limit to 2 decimal places
                   return prev + value;
               });
           };
@@ -3524,7 +4193,7 @@
                                 ))}
                             </ul>
                         ) : (
-                            <p className="text-gray-500 text-sm">No recent payments.</p>
+                            <p className="text-gray-500 text-sm">No recent payments for this employee.</p>
                         )}
                     </div>
 
@@ -3538,10 +4207,9 @@
                               <button
                                   key={method.id}
                                   type="button"
-                                  data-method={method.name} // For flashing effect
-                                  onClick={() => handlePaymentMethodClick(method.name, method.color)}
+                                  onClick={() => handlePaymentMethodClick(method.name)}
                                   className={`flex flex-col items-center justify-center p-4 rounded-lg shadow-md transition duration-300
-                                      ${selectedPaymentMethod === method.name ? 'ring-2 ring-blue-500' : 'bg-gray-100 hover:bg-gray-200'}
+                                      ${selectedPaymentMethod === method.name ? 'ring-4 ring-blue-600' : 'bg-gray-100 hover:bg-gray-200'}
                                   `}
                                   style={{ backgroundColor: selectedPaymentMethod === method.name ? method.color : '' }}
                               >
@@ -3567,19 +4235,19 @@
                           />
                           <div className="grid grid-cols-3 gap-2">
                               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
-                                  <button key={num} onClick={() => handleNumpadInput(String(num))} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold">
+                                  <button key={num} onClick={() => handleNumpadInput(String(num))} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md">
                                       {num}
                                   </button>
                               ))}
-                              <button onClick={() => handleNumpadInput('0')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold">0</button>
-                              <button onClick={() => handleNumpadInput('.')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold">.</button>
-                              <button onClick={handleNumpadDelete} className="bg-orange-400 hover:bg-orange-500 text-white p-4 rounded-lg text-xl font-bold">DEL</button>
+                              <button onClick={() => handleNumpadInput('0')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md">0</button>
+                              <button onClick={() => handleNumpadInput('.')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md">.</button>
+                              <button onClick={handleNumpadDelete} className="bg-orange-400 hover:bg-orange-500 text-white p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md">DEL</button>
                           </div>
                           <div className="flex justify-between mt-4 space-x-2">
-                              <button onClick={handleNumpadCancel} className="bg-red-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-600 flex-grow">
+                              <button onClick={handleNumpadCancel} className="bg-red-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-600 flex-grow transition duration-200 shadow-md">
                                   {translations.cancel}
                               </button>
-                              <button onClick={handleNumpadConfirm} className="bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 flex-grow">
+                              <button onClick={handleNumpadConfirm} className="bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 flex-grow transition duration-200 shadow-md">
                                   {translations.add}
                               </button>
                           </div>
@@ -3603,11 +4271,13 @@
 
         // Employee Dashboard Component
         const EmployeeDashboard = () => {
-          const { currentUser, payments, expenses, bonuses, translations, getPaymentMethodDetails, getBranchName } = useAppContext();
+          const { currentUser, payments, expenses, bonuses, translations, getPaymentMethodDetails, getBranchName, changeCurrentUserPassword, setMessage } = useAppContext();
 
           const currentLocalDate = new Date();
           const [selectedMonth, setSelectedMonth] = useState(currentLocalDate.getMonth());
           const [selectedYear, setSelectedYear] = useState(currentLocalDate.getFullYear());
+          const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+
 
           // Filter payments for the current employee for the selected month/year
           const employeePayments = payments.filter(p =>
@@ -3773,8 +4443,101 @@
                   clearFilters={() => {}}
                 />
               </div>
+
+              {/* Change Password Button for User */}
+              <div className="p-6 bg-white rounded-lg shadow-lg text-center">
+                  <button
+                      onClick={() => setIsChangePasswordModalOpen(true)}
+                      className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition duration-300 shadow-md"
+                  >
+                      {translations.changePassword}
+                  </button>
+              </div>
+
+              <ChangePasswordModal
+                  isOpen={isChangePasswordModalOpen}
+                  onClose={() => setIsChangePasswordModalOpen(false)}
+                  onSave={changeCurrentUserPassword}
+                  translations={translations}
+                  setMessage={setMessage}
+              />
             </div>
           );
+        };
+
+        const ChangePasswordModal = ({ isOpen, onClose, onSave, translations, setMessage }) => {
+            const [newPassword, setNewPassword] = useState('');
+            const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                if (!newPassword || !confirmNewPassword) {
+                    setMessage(translations.pleaseEnterAllFields);
+                    return;
+                }
+                if (newPassword !== confirmNewPassword) {
+                    setMessage(translations.passwordMismatch);
+                    return;
+                }
+                const success = await onSave(newPassword);
+                if (success) {
+                    setNewPassword('');
+                    setConfirmNewPassword('');
+                    onClose();
+                }
+            };
+
+            return (
+                <Modal
+                    title={translations.changePassword}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                >
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label htmlFor="newPassword" className="block text-gray-700 text-sm font-bold mb-2">
+                                {translations.enterNewPassword}:
+                            </label>
+                            <input
+                                type="password"
+                                id="newPassword"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="confirmNewPassword" className="block text-gray-700 text-sm font-bold mb-2">
+                                {translations.confirmNewPassword}:
+                            </label>
+                            <input
+                                type="password"
+                                id="confirmNewPassword"
+                                value={confirmNewPassword}
+                                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            />
+                        </div>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-400"
+                            >
+                                {translations.cancel}
+                            </button>
+                            <button
+                                type="submit"
+                                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700"
+                            >
+                                {translations.saveChanges}
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+            );
         };
 
         const EmployeeFinancials = ({ users, expenses, bonuses, addExpense, editExpense, deleteExpense, addBonus, editBonus, deleteBonus, translations, setMessage, selectedMonth, selectedYear, setFinancialsMonth, setFinancialsYear, appId }) => {
@@ -4676,7 +5439,7 @@
 
             const expenseTypes = [
                 'managementTeamSalary', 'tools', 'equipment', 'insurance', 'violations', 'bankLoans',
-                'internet', 'maintenance', 'newInstallations', 'financing', 'profitForPartners'
+                'internet', 'maintenance', 'newInstallations', 'financing'
             ];
 
             const months = [
