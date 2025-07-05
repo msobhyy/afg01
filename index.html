@@ -55,8 +55,298 @@
         .darkgreen-800 {
             color: #166534; /* Even darker green */
         }
+
+        /* Supervisor Dashboard specific styles from original wo_4.html cloning */
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #fcfcfc;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .selection-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s, filter 0.3s ease;
+        }
+        .selection-card:hover {
+            transform: translateY(-3px);
+            border-color: #a3d9ff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .selection-card.selected {
+            border: 3px solid #007bff;
+            box-shadow: 0 0 12px rgba(0, 123, 255, 0.4);
+            background-color: #e6f2ff;
+            transform: scale(1.05); /* Slightly enlarged when selected */
+            z-index: 10;
+        }
+        .selection-card img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 8px;
+            border: 2px solid #ddd;
+        }
+        .selection-card p {
+            margin: 0;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #444;
+            word-wrap: break-word;
+        }
+        .selection-card.payment-method-card { /* Renamed to avoid conflict with general .payment-method */
+            padding: 20px 12px;
+            font-size: 0.95em;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .selection-card.payment-method-card .payment-method-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 5px;
+            border: none;
+        }
+
+        /* Calculator Styles */
+        .calculator-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .calculator {
+            background-color: #283a4c; /* Modern dark blue-gray */
+            border-radius: 20px; /* More rounded */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6); /* More prominent shadow */
+            width: 90%;
+            max-width: 320px;
+            padding: 25px; /* Slightly more padding */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 2px solid #3d566e; /* Darker border */
+        }
+        .calculator-display {
+            background-color: #20bbd2; /* Light gray-blue */
+            color: #283a4c; /* Match calculator background */
+            font-size: 2.5em; /* Larger font */
+            padding: 15px 20px;
+            border-radius: 12px; /* More rounded */
+            text-align: right;
+            margin-bottom: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.3); /* Deeper inset shadow */
+            height: 60px; /* Fixed height */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-weight: bold;
+        }
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Changed to 3 columns for numpad */
+            gap: 12px; /* Slightly larger gap */
+        }
+        .calc-button {
+            background-color: hsl(32, 100%, 50%); /* Slightly lighter blue-gray */
+            color: rgb(16, 46, 180);
+            padding: 22px;
+            font-size: 1.6em; /* Slightly larger font */
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Softer shadow */
+        }
+        .calc-button:active {
+            transform: translateY(2px); /* More pronounced press effect */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .calc-button:hover {
+            background-color: #55728a; /* Lighter hover effect */
+        }
+        .calc-button.action {
+            background-color: #ff7f50; /* Coral/Orange for clear/back */
+        }
+        .calc-button.action:hover {
+            background-color: #ff6347; /* Darker coral on hover */
+        }
+        /* Styles for bottom action buttons */
+        .calc-bottom-actions {
+            display: flex;
+            gap: 12px; /* Match other gaps */
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .calc-bottom-actions .calc-button {
+            flex-grow: 1;
+            padding: 18px; /* Adjust padding for these buttons */
+            font-size: 1.4em; /* Adjust font size */
+        }
+        .calc-bottom-actions .calc-button.cancel {
+            background-color: #f44336; /* Medium Red for cancel */
+        }
+        .calc-bottom-actions .calc-button.cancel:hover {
+            background-color: #d32f2f; /* Darker red on hover */
+        }
+        .calc-bottom-actions .calc-button.done {
+            background-color: #4CAF50; /* Medium Green for done */
+        }
+        .calc-bottom-actions .calc-button.done:hover {
+            background-color: #388E3C; /* Darker green on hover */
+        }
+
+        /* New flash effect for amount input */
+        @keyframes flashEffect {
+            0% { background-color: #d4edda; } /* Success green */
+            50% { background-color: #e6f2ff; } /* Light blue, subtle flash */
+            100% { background-color: #d4edda; }
+        }
+
+        .flash-success {
+            animation: flashEffect 0.5s ease-in-out 2; /* Flash twice over 1 second total, original behavior */
+        }
+
+        /* New flash border effect for steps */
+        @keyframes flashBorderGreen {
+            0%, 100% { box-shadow: 0 0 0 0px rgba(0, 128, 0, 0); border-color: transparent; }
+            50% { box-shadow: 0 0 0 6px rgba(0, 128, 0, 0.6); border-color: #008000; } /* More prominent flash */
+        }
+
+        .flash-border-green {
+            animation: flashBorderGreen 2.5s ease-in-out 2; /* Flash twice over 5 seconds */
+        }
+
+        /* Employee Details Section */
+        .employee-details-section {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .employee-details-section h3 {
+            margin-top: 0;
+            color: #007bff;
+            text-align: center;
+            font-size: 1.2em;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+        .employee-details-section .detail-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95em;
+            color: #555;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #e9ecef;
+        }
+        .employee-details-section .detail-item:last-child {
+             border-bottom: none;
+        }
+        .employee-details-section .detail-item strong {
+            color: #333;
+        }
+        .employee-details-section .detail-item.total {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 10px;
+            border-top: 2px solid #28a745;
+            padding-top: 10px;
+        }
+        .employee-details-section .recent-payments-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #fff;
+            padding: 0;
+        }
+        .employee-details-section .recent-payments-list table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .employee-details-section .recent-payments-list th,
+        .employee-details-section .recent-payments-list td {
+            padding: 8px;
+            font-size: 0.8em;
+            border: 1px solid #e9ecef;
+        }
+        .employee-details-section .recent-payments-list th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+        }
+        .employee-details-section .recent-payments-list tr:nth-child(even) {
+            background-color: #fcfdfe;
+        }
+        .employee-details-section .recent-payments-list .no-data {
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .selection-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            .selection-card img {
+                width: 60px;
+                height: 60px;
+            }
+            .selection-card p {
+                font-size: 0.8em;
+            }
+            .selection-card.payment-method-card {
+                padding: 15px 8px;
+                font-size: 0.85em;
+            }
+            .calculator-display {
+                font-size: 2em;
+                padding: 10px 15px;
+                height: 50px;
+            }
+            .calc-button {
+                padding: 18px;
+                font-size: 1.4em;
+            }
+            .calc-bottom-actions .calc-button {
+                padding: 15px;
+                font-size: 1.2em;
+            }
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <div id="root"></div>
@@ -64,14 +354,14 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Include SheetJS (xlsx) for Excel parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, query, onSnapshot, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Corrected: deleteField is from firestore, not auth
+        import { getFirestore, collection, query, onSnapshot, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, serverTimestamp, getDocs, where, deleteField } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Expose Firebase functions globally for the Babel script
         window.firebase = {
@@ -81,6 +371,7 @@
             signInWithCustomToken,
             onAuthStateChanged,
             updatePassword,
+            deleteField, // Expose deleteField for removing simulatedPassword
             getFirestore,
             collection,
             query,
@@ -95,6 +386,9 @@
             getDocs,
             where
         };
+        // Expose PDF libraries globally
+        window.html2canvas = html2canvas;
+        window.jspdf = jspdf;
     </script>
 
     <script type="text/babel">
@@ -116,12 +410,14 @@
             logout: 'Logout',
             loginWelcome: 'Welcome! Please Log In',
             emailPlaceholder: 'Email or Employee ID',
-            passwordPlaceholder: 'Password (any for demo)',
+            passwordPlaceholder: 'Password',
             loginButton: 'Login',
             loginError: 'Invalid email/employee ID or password.',
             admin: 'Admin',
             supervisor: 'Supervisor',
             employeeRole: 'Employee',
+            manager: 'Manager',
+            partner: 'Partner',
             branch: 'Branch',
             mainBranch: 'Main Branch',
             downtownStore: 'Downtown Store',
@@ -375,6 +671,27 @@
             errorDownloadingTemplate: 'Error downloading user template.',
             filteredPaymentsExport: 'Filtered Payments Export',
             allDataBackup: 'ShopApp_All_Data_Backup',
+            // NEW: PDF Report related translations
+            employeeReportPdf: 'Employee_Monthly_Report',
+            allEmployeesReportPdf: 'All_Employees_Monthly_Calculations',
+            downloadEmployeeReport: 'Download My Monthly Report (PDF)',
+            downloadAllEmployeesCalculations: 'Download All Employees Calculations (PDF)',
+            reportFor: 'Report for',
+            generatedOn: 'Generated On',
+            employeeDetails: 'Employee Details',
+            totalPayments: 'Total Payments',
+            totalExpensesSummary: 'Total Expenses',
+            totalBonusesSummary: 'Total Bonuses',
+            netIncomeSummary: 'Net Income',
+            reportTitle: 'Monthly Financial Report',
+            employeeName: 'Employee Name',
+            employeeNumber: 'Employee Number',
+            branch: 'Branch',
+            target: 'Target',
+            paymentsSummary: 'Payments Summary',
+            expensesSummary: 'Expenses Summary',
+            bonusesSummary: 'Bonuses Summary',
+            noDataForReport: 'No data available for this report for the selected period.',
           },
           ar: {
             appName: 'تطبيق المتجر',
@@ -383,12 +700,14 @@
             logout: 'تسجيل الخروج',
             loginWelcome: 'أهلاً بك! الرجاء تسجيل الدخول',
             emailPlaceholder: 'البريد الإلكتروني أو رقم الموظف',
-            passwordPlaceholder: 'كلمة المرور (أي شيء للعرض)',
+            passwordPlaceholder: 'كلمة المرور',
             loginButton: 'تسجيل الدخول',
             loginError: 'بريد إلكتروني/رقم موظف أو كلمة مرور غير صحيحة.',
             admin: 'المشرف',
             supervisor: 'المشرف الفرعي',
             employeeRole: 'الموظف',
+            manager: 'المدير', // NEW: Manager Role
+            partner: 'الشريك', // NEW: Partner Role
             branch: 'الفرع',
             mainBranch: 'الفرع الرئيسي',
             downtownStore: 'متجر وسط المدينة',
@@ -636,12 +955,33 @@
             errorReadingExcelFile: 'خطأ في قراءة ملف الإكسل. الرجاء التأكد من أنه صالح.',
             generalError: 'خطأ عام',
             userTemplate: 'نموذج استيراد المستخدمين',
-            userTemplateFileName: 'نموذج_استيراد_المستخدمين.xlsx',
+            userTemplateFileName: 'user_import_template.xlsx',
             userTemplateDownloaded: 'تم تنزيل نموذج استيراد المستخدمين بنجاح!',
             confirmDeleteSelectedUsers: 'هل أنت متأكد من رغبتك في حذف المستخدمين المحددين؟',
             errorDownloadingTemplate: 'خطأ في تنزيل النموذج.',
             filteredPaymentsExport: 'تصدير المدفوعات المصفاة',
             allDataBackup: 'نسخة_احتياطية_كاملة_لتطبيق_المتجر',
+            // NEW: PDF Report related translations
+            employeeReportPdf: 'Employee_Monthly_Report',
+            allEmployeesReportPdf: 'All_Employees_Monthly_Calculations',
+            downloadEmployeeReport: 'تنزيل تقريري الشهري (PDF)',
+            downloadAllEmployeesCalculations: 'تنزيل حسابات جميع الموظفين (PDF)',
+            reportFor: 'تقرير لـ',
+            generatedOn: 'تم الإنشاء في',
+            employeeDetails: 'تفاصيل الموظف',
+            totalPayments: 'إجمالي المدفوعات',
+            totalExpensesSummary: 'إجمالي المصروفات',
+            totalBonusesSummary: 'إجمالي المكافآت',
+            netIncomeSummary: 'صافي الدخل',
+            reportTitle: 'التقرير المالي الشهري',
+            employeeName: 'اسم الموظف',
+            employeeNumber: 'رقم الموظف',
+            branch: 'الفرع',
+            target: 'الهدف',
+            paymentsSummary: 'ملخص المدفوعات',
+            expensesSummary: 'ملخص المصروفات',
+            bonusesSummary: 'ملخص المكافآت',
+            noDataForReport: 'لا توجد بيانات متاحة لهذا التقرير للفترة المحددة.',
           },
         };
 
@@ -711,17 +1051,15 @@
 
                     console.log("Firebase initialized successfully!");
 
-                    if (initialAuthToken) {
-                        await firebase.signInWithCustomToken(firebaseAuth, initialAuthToken);
-                    } else {
-                        await firebase.signInAnonymously(firebaseAuth);
-                    }
+                    // Authenticate anonymously first to get a userId for Firestore rules
+                    await firebase.signInAnonymously(firebaseAuth);
 
                     firebase.onAuthStateChanged(firebaseAuth, (user) => {
                         if (user) {
                             setUserId(user.uid);
                             console.log("User authenticated:", user.uid);
                         } else {
+                            // If for some reason user logs out or token expires, re-authenticate anonymously
                             firebase.signInAnonymously(firebaseAuth).then(anonUser => {
                                 setUserId(anonUser.user.uid);
                                 console.log("Signed in anonymously:", anonUser.user.uid);
@@ -756,6 +1094,7 @@
             const unsubscribeUsers = firebase.onSnapshot(firebase.query(firebase.collection(db, `${publicDataPath}/users`)), (snapshot) => {
                 const fetchedUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setUsers(fetchedUsers);
+                // If currentUser is set, ensure it's updated with the latest data from Firestore
                 if (currentUser && fetchedUsers.some(u => u.id === currentUser.id)) {
                     setCurrentUser(fetchedUsers.find(u => u.id === currentUser.id));
                 }
@@ -832,6 +1171,7 @@
             };
           }, [db, userId, appId, currentUser]);
 
+          // MODIFIED: handleLogin function to use role-based passwords
           const handleLogin = (identifier, password) => {
             let user = users.find(u => u.email === identifier);
 
@@ -839,12 +1179,44 @@
                 user = users.find(u => u.employeeNumber === identifier);
             }
 
-            // For demo purposes, any password works if user is found.
-            // In a real app, you'd verify the password securely.
             if (user) {
-              setIsLoggedIn(true);
-              setCurrentUser(user);
-              setLoginError('');
+                let expectedPassword = '';
+                switch (user.role) {
+                    case 'admin':
+                        expectedPassword = 'Admin';
+                        break;
+                    case 'employee':
+                        expectedPassword = 'Employee';
+                        break;
+                    case 'supervisor':
+                        expectedPassword = 'Supervisor';
+                        break;
+                    case 'manager': // NEW role
+                        expectedPassword = 'Manager';
+                        break;
+                    case 'partner': // NEW role
+                        expectedPassword = 'Partner';
+                        break;
+                    default:
+                        expectedPassword = ''; // No default password
+                }
+
+                // Check against the hardcoded password first
+                if (password === expectedPassword) {
+                    setIsLoggedIn(true);
+                    setCurrentUser(user);
+                    setLoginError('');
+                }
+                // If a simulatedPassword exists (from admin reset), allow login with it
+                else if (user.simulatedPassword && password === user.simulatedPassword) {
+                    setIsLoggedIn(true);
+                    setCurrentUser(user);
+                    setLoginError('');
+                    setMessage(translations[language].passwordChangeRequired || "Please change your temporary password.");
+                }
+                else {
+                    setLoginError(translations[language].loginError);
+                }
             } else {
               setLoginError(translations[language].loginError);
             }
@@ -856,6 +1228,7 @@
                     await auth.signOut();
                     setIsLoggedIn(false);
                     setCurrentUser(null);
+                    // After logout, sign in anonymously to maintain Firestore access for public data
                     await firebase.signInAnonymously(auth);
                 } catch (error) {
                     console.error("Error signing out:", error);
@@ -863,28 +1236,45 @@
             }
           };
 
-          // Function for a user to change their OWN password
+          // NEW FUNCTION: For a user to change their OWN password
           const changeCurrentUserPassword = async (newPassword) => {
               if (!auth.currentUser) {
                   setMessage(translations[language].passwordChangeError + ": No authenticated user.");
                   return false;
               }
               try {
+                  // Firebase Auth's updatePassword function
                   await firebase.updatePassword(auth.currentUser, newPassword);
+
+                  // If a simulated password was used for login, clear it after successful change
+                  if (currentUser.simulatedPassword) {
+                      const userDocRef = firebase.doc(db, `artifacts/${appId}/public/data/users`, currentUser.id);
+                      await firebase.updateDoc(userDocRef, {
+                          simulatedPassword: firebase.deleteField(), // Remove the field
+                          updatedAt: firebase.serverTimestamp(),
+                      });
+                  }
                   setMessage(translations[language].passwordChangedSuccessfully);
                   return true;
-              } catch (error) {
+              }
+              catch (error) {
                   console.error("Error changing password:", error);
-                  setMessage(`${translations[language].passwordChangeError} ${error.message}`);
+                  // Handle specific Firebase Auth errors if needed
+                  let errorMessage = translations[language].passwordChangeError;
+                  if (error.code === 'auth/requires-recent-login') {
+                      errorMessage += " Please re-authenticate before changing your password.";
+                  }
+                  setMessage(errorMessage);
                   return false;
               }
           };
 
-          // Function for Admin to "reset" a user's password (simulated)
+          // NEW FUNCTION: For Admin to "reset" a user's password (simulated for client-side)
           const adminResetUserPassword = async (userIdToReset, newPassword) => {
-              // IMPORTANT: In a real application, admin password resets should be done via
-              // Firebase Admin SDK on a secure backend server, not directly from the client.
-              // This is a simulation for demonstration purposes by updating a 'simulatedPassword' field.
+              // IMPORTANT: In a real application, admin password resets for Firebase Authentication
+              // should be done via Firebase Admin SDK on a secure backend server, not directly from the client.
+              // This client-side simulation updates a 'simulatedPassword' field in Firestore.
+              // The user will then log in with this 'simulatedPassword' and be prompted to change it.
               try {
                   const userDocRef = firebase.doc(db, `artifacts/${appId}/public/data/users`, userIdToReset);
                   await firebase.updateDoc(userDocRef, {
@@ -1394,6 +1784,10 @@
                 return <SupervisorDashboard />;
               case 'employee':
                 return <EmployeeDashboard />;
+              case 'manager':
+                return <ManagerDashboard />;
+              case 'partner':
+                return <PartnerDashboard />;
               default:
                 return <Login />;
             }
@@ -1405,7 +1799,7 @@
                 <h1 className="text-2xl font-bold text-gray-800">{translations.appName}</h1>
                 <div className="flex items-center space-x-4">
                   <span className="text-gray-600">
-                    {translations.welcome} <span className="font-semibold">{currentUser.name}</span> ({currentUser.role === 'admin' ? translations.admin : currentUser.role === 'supervisor' ? translations.supervisor : translations.employeeRole})
+                    {translations.welcome} <span className="font-semibold">{currentUser.name}</span> ({currentUser.role === 'admin' ? translations.admin : currentUser.role === 'supervisor' ? translations.supervisor : currentUser.role === 'employee' ? translations.employeeRole : currentUser.role === 'manager' ? translations.manager : currentUser.role === 'partner' ? translations.partner : currentUser.role})
                   </span>
                   <span className="text-sm text-gray-500">{userId}</span>
                   <div className="flex space-x-2">
@@ -1674,7 +2068,7 @@
 
           const handleItemCheckboxChange = (e, itemId) => {
             if (e.target.checked) {
-              onMultiSelectChange([...selectedItems, itemId]);
+              onMultiSelectChange(selectedItems.filter(id => id !== itemId).concat(itemId)); // Ensure no duplicates and order is maintained
             } else {
               onMultiSelectChange(selectedItems.filter(id => id !== itemId));
             }
@@ -1822,7 +2216,7 @@
                   placeholder={searchPlaceholder || translations.search + '...'}
                   value={searchTerm}
                   onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                  className="p-2 border border-gray-300 rounded-lg w-full md:w-auto mb-2 md:mb-0 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border border-gray-300 rounded-lg md:w-auto focus:ring-blue-500 focus:border-blue-500 mb-2 md:mb-0"
                 />
                 <div className="flex items-center space-x-2">
                   <label htmlFor="itemsPerPage" className="text-gray-700">{translations.itemsPerPage}</label>
@@ -2059,6 +2453,7 @@
           );
         };
 
+        // UserForm Component
         const UserForm = ({ user, onSave, onCancel, branches, translations, setMessage, adminResetUserPassword }) => {
           const [name, setName] = useState(user?.name || '');
           const [nameAr, setNameAr] = useState(user?.nameAr || '');
@@ -2068,8 +2463,8 @@
           const [targetAmount, setTargetAmount] = useState(user?.targetAmount || '');
           const [employeeNumber, setEmployeeNumber] = useState(user?.employeeNumber || '');
           const [imageUrl, setImageUrl] = useState(user?.imageUrl || '');
-          const [newPassword, setNewPassword] = useState('');
-          const [confirmPassword, setConfirmPassword] = useState('');
+          const [newPassword, setNewPassword] = useState(''); // For admin to set temporary password
+          const [confirmPassword, setConfirmPassword] = useState(''); // For admin to confirm temporary password
 
           const handleSubmit = (e) => {
             e.preventDefault();
@@ -2077,7 +2472,7 @@
               setMessage(translations.pleaseFillAllUserFields);
               return;
             }
-            if ((role === 'supervisor' || role === 'employee') && !branchId) {
+            if ((role === 'supervisor' || role === 'employee' || role === 'manager' || role === 'partner') && !branchId) { // Added new roles
               setMessage(translations.pleaseSelectBranchForSupervisorEmployee);
               return;
             }
@@ -2087,13 +2482,14 @@
               nameAr,
               email,
               role,
-              branchId: (role === 'admin' ? '' : branchId),
+              branchId: (role === 'admin' ? '' : branchId), // Admin doesn't need a branchId
               targetAmount: (role === 'employee' ? parseFloat(targetAmount) : 0),
               employeeNumber,
               imageUrl,
             });
           };
 
+          // Handle Admin Password Reset
           const handlePasswordReset = async () => {
               if (!newPassword || !confirmPassword) {
                   setMessage(translations.pleaseFillAllFields);
@@ -2104,7 +2500,7 @@
                   return;
               }
               if (user && user.id) {
-                  // Admin reset function
+                  // Call the adminResetUserPassword function from AppContext
                   const success = await adminResetUserPassword(user.id, newPassword);
                   if (success) {
                       setNewPassword('');
@@ -2182,7 +2578,7 @@
                     if (e.target.value === 'admin') {
                       setBranchId('');
                       setTargetAmount('');
-                    } else if (e.target.value === 'supervisor') {
+                    } else if (e.target.value === 'supervisor' || e.target.value === 'manager' || e.target.value === 'partner') { // Added new roles
                       setTargetAmount('');
                     }
                   }}
@@ -2193,9 +2589,11 @@
                   <option value="admin">{translations.admin}</option>
                   <option value="supervisor">{translations.supervisor}</option>
                   <option value="employee">{translations.employeeRole}</option>
+                  <option value="manager">{translations.manager}</option>
+                  <option value="partner">{translations.partner}</option>
                 </select>
               </div>
-              {(role === 'supervisor' || role === 'employee') && (
+              {(role === 'supervisor' || role === 'employee' || role === 'manager' || role === 'partner') && ( // Added new roles
                 <div>
                   <label htmlFor="userBranch" className="block text-gray-700 text-sm font-bold mb-2">
                     {translations.branch}:
@@ -2259,6 +2657,7 @@
                 </button>
               </div>
 
+              {/* Admin Password Reset Section (visible only when editing an existing user) */}
               {user && (
                   <div className="border-t border-gray-200 mt-6 pt-4 space-y-3">
                       <h4 className="text-xl font-semibold text-gray-800">{translations.changePassword}</h4>
@@ -2272,6 +2671,7 @@
                               value={newPassword}
                               onChange={(e) => setNewPassword(e.target.value)}
                               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="Set temporary password"
                           />
                       </div>
                       <div>
@@ -2284,6 +2684,7 @@
                               value={confirmPassword}
                               onChange={(e) => setConfirmPassword(e.target.value)}
                               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                              placeholder="Confirm temporary password"
                           />
                       </div>
                       <button
@@ -2496,15 +2897,18 @@
         };
 
 
-        // Supervisor Dashboard Component
+        // Supervisor Dashboard Component - ENHANCED (copied as is)
         const SupervisorDashboard = () => {
-          const { currentUser, users, payments, paymentMethods, addPayment, translations, setMessage, getPaymentMethodDetails } = useAppContext();
+          const { currentUser, users, payments, paymentMethods, addPayment, translations, setMessage, getPaymentMethodDetails, getEmployeeName } = useAppContext();
           const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
           const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
           const [last5Payments, setLast5Payments] = useState([]);
           const [approvedFlash, setApprovedFlash] = useState(false);
           const [isNumpadOpen, setIsNumpadOpen] = useState(false);
           const [currentNumpadValue, setCurrentNumpadValue] = useState('');
+          const [flashEmployeeSelection, setFlashEmployeeSelection] = useState(false);
+          const [flashPaymentMethodSelection, setFlashPaymentMethodSelection] = useState(false);
+          const [flashAmountInput, setFlashAmountInput] = useState(false);
 
           const employeesInBranch = users.filter(user => user.branchId === currentUser.branchId && user.role === 'employee');
 
@@ -2522,15 +2926,20 @@
 
           const handleEmployeeSelect = (employeeId) => {
               setSelectedEmployeeId(employeeId);
-              setSelectedPaymentMethod(''); // Reset payment method when employee changes
-              setCurrentNumpadValue(''); // Reset amount
-              setIsNumpadOpen(false); // Close numpad
+              setSelectedPaymentMethod('');
+              setCurrentNumpadValue('');
+              setIsNumpadOpen(false);
+              setFlashEmployeeSelection(false);
+              setFlashPaymentMethodSelection(true);
+              setFlashAmountInput(false);
           };
 
           const handlePaymentMethodClick = (methodName) => {
               setSelectedPaymentMethod(methodName);
-              setCurrentNumpadValue(''); // Reset numpad value
+              setCurrentNumpadValue('');
               setIsNumpadOpen(true);
+              setFlashPaymentMethodSelection(false);
+              setFlashAmountInput(true);
           };
 
           const handleNumpadConfirm = async () => {
@@ -2542,26 +2951,29 @@
               await addPayment(currentUser.branchId, selectedEmployeeId, amount, selectedPaymentMethod, currentUser.id);
               setMessage(translations.paymentAddedSuccessfully);
               setApprovedFlash(true);
-              setTimeout(() => setApprovedFlash(false), 1500); // Flash for 1.5 seconds
+              setTimeout(() => setApprovedFlash(false), 1500);
 
-              // Reset fields after successful payment
               setSelectedEmployeeId('');
               setSelectedPaymentMethod('');
               setCurrentNumpadValue('');
               setIsNumpadOpen(false);
+              setFlashAmountInput(false);
+              setFlashEmployeeSelection(true);
           };
 
           const handleNumpadCancel = () => {
               setCurrentNumpadValue('');
               setIsNumpadOpen(false);
               setMessage(translations.amountEntryCancelled);
+              setFlashAmountInput(false);
+              setFlashPaymentMethodSelection(true);
           };
 
           const handleNumpadInput = (value) => {
               setCurrentNumpadValue(prev => {
                   if (value === '.' && prev.includes('.')) return prev;
                   if (prev === '0' && value !== '.') return value;
-                  if (prev.includes('.') && prev.split('.')[1].length >= 2) return prev; // Limit to 2 decimal places
+                  if (prev.includes('.') && prev.split('.')[1].length >= 2) return prev;
                   return prev + value;
               });
           };
@@ -2570,138 +2982,162 @@
               setCurrentNumpadValue(prev => prev.slice(0, -1));
           };
 
+          useEffect(() => {
+            setFlashEmployeeSelection(true);
+          }, []);
+
 
           return (
-            <div className="supervisor-dashboard space-y-6">
-              <h2 className="text-3xl font-bold text-gray-800">{translations.supervisorDashboard}</h2>
-
-              {/* Add Employee Payment Section */}
-              <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="supervisor-dashboard space-y-6 flex flex-col md:flex-row gap-6">
+              {/* Left Column: Employee Selection & Payment Entry */}
+              <div className="flex-1 bg-white p-6 rounded-lg shadow-lg">
+                <h2 className="text-3xl font-bold text-gray-800 mb-4">{translations.supervisorDashboard}</h2>
                 <h3 className="text-2xl font-semibold text-gray-800 mb-4">{translations.addEmployeePayment}</h3>
-                <div className="space-y-4">
-                  {/* Employee Selection */}
-                  <div>
-                    <label htmlFor="selectEmployee" className="block text-gray-700 text-lg font-bold mb-2">
-                      {translations.selectEmployee}
+
+                {/* Employee Selection */}
+                <div className={`space-y-4 p-4 rounded-lg border-2 ${flashEmployeeSelection ? 'flash-border-green' : 'border-transparent'}`}>
+                  <label htmlFor="selectEmployee" className="block text-gray-700 text-lg font-bold mb-2">
+                    {translations.selectEmployee}
+                  </label>
+                  <div className="selection-grid">
+                      {employeesInBranch.length > 0 ? (
+                          employeesInBranch.map(employee => (
+                              <div
+                                  key={employee.id}
+                                  onClick={() => handleEmployeeSelect(employee.id)}
+                                  className={`selection-card ${selectedEmployeeId === employee.id ? 'selected' : ''} ${flashEmployeeSelection && selectedEmployeeId !== employee.id ? 'dimmed' : ''}`}
+                              >
+                                  <img
+                                      src={employee.imageUrl || `https://placehold.co/100x100/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${employee.name.substring(0,2).toUpperCase()}`}
+                                      alt={employee.name}
+                                      className="h-16 w-16 rounded-full object-cover mb-2"
+                                      onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/cccccc/000000?text=${employee.name.substring(0,2).toUpperCase()}`; }}
+                                  />
+                                  <p className="text-sm font-semibold text-gray-800 text-center">{getEmployeeName(employee.id)}</p>
+                              </div>
+                          ))
+                      ) : (
+                          <p className="col-span-full text-center text-gray-500">{translations.noEmployeesInBranch}</p>
+                      )}
+                  </div>
+                </div>
+
+                {selectedEmployeeId && (
+                  <>
+                  {/* Payment Method Selection */}
+                  <div className={`mt-6 space-y-4 p-4 rounded-lg border-2 ${flashPaymentMethodSelection ? 'flash-border-green' : 'border-transparent'}`}>
+                    <label className="block text-gray-700 text-lg font-bold mb-2">
+                      {translations.selectPaymentMethod} {getEmployeeName(selectedEmployeeId)}
                     </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        {employeesInBranch.length > 0 ? (
-                            employeesInBranch.map(employee => (
-                                <div
-                                    key={employee.id}
-                                    onClick={() => handleEmployeeSelect(employee.id)}
-                                    className={`flex flex-col items-center p-3 rounded-lg shadow-md cursor-pointer transition duration-300
-                                        ${selectedEmployeeId === employee.id ? 'ring-2 ring-blue-500 bg-blue-100' : 'bg-gray-50 hover:bg-gray-100'}
-                                    `}
-                                >
-                                    <img
-                                        src={employee.imageUrl || `https://placehold.co/100x100/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${employee.name.substring(0,2).toUpperCase()}`}
-                                        alt={employee.name}
-                                        className="h-16 w-16 rounded-full object-cover mb-2"
-                                        onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/cccccc/000000?text=${employee.name.substring(0,2).toUpperCase()}`; }}
-                                    />
-                                    <span className="text-sm font-semibold text-gray-800 text-center">{employee.name}</span>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="col-span-full text-center text-gray-500">{translations.noEmployeesInBranch}</p>
-                        )}
+                    <div className="flex flex-wrap gap-3">
+                        {paymentMethods.map(method => (
+                            <button
+                                key={method.id}
+                                type="button"
+                                onClick={() => handlePaymentMethodClick(method.name)}
+                                className={`selection-card payment-method-card
+                                    ${selectedPaymentMethod === method.name ? 'selected' : ''}
+                                    ${flashPaymentMethodSelection && selectedPaymentMethod !== method.name ? 'dimmed' : ''}
+                                `}
+                                style={{ backgroundColor: selectedPaymentMethod === method.name ? method.color : '' }}
+                            >
+                                <span className="payment-method-icon" style={{ color: selectedPaymentMethod === method.name ? 'white' : method.color }}>{method.icon}</span>
+                                <span className={`text-lg font-semibold ${selectedPaymentMethod === method.name ? 'text-white' : 'text-gray-800'}`}>
+                                    {translations.language === 'ar' && method.nameAr ? method.nameAr : method.name}
+                                </span>
+                            </button>
+                        ))}
                     </div>
                   </div>
+                  </>
+                )}
 
-                  {selectedEmployeeId && (
-                    <>
-                    {/* Last 5 Payments */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                        <h4 className="text-lg font-semibold text-gray-800 mb-2">{translations.last5PaymentsFor} {users.find(u => u.id === selectedEmployeeId)?.name}:</h4>
-                        {last5Payments.length > 0 ? (
-                            <ul className="list-disc list-inside space-y-1 text-gray-700">
-                                {last5Payments.map(p => (
-                                    <li key={p.id}>
-                                        SAR {p.amount?.toFixed(2)} {translations.via} {paymentMethods.find(pm => pm.name === p.paymentMethod)?.name} ({p.timestamp?.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' })})
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="text-gray-500 text-sm">No recent payments for this employee.</p>
-                        )}
+                {selectedPaymentMethod && isNumpadOpen && (
+                    <div className={`mt-6 bg-gray-50 p-6 rounded-lg shadow-inner border-2 ${flashAmountInput ? 'flash-border-green' : 'border-transparent'}`}>
+                        <h4 className="text-xl font-semibold text-gray-800 mb-4">{translations.enterAmount}</h4>
+                        <input
+                            type="text"
+                            value={`SAR ${currentNumpadValue}`}
+                            readOnly
+                            className="w-full p-3 border border-gray-300 rounded-lg text-2xl font-bold text-center mb-4 bg-white calculator-display"
+                        />
+                        <div className="grid grid-cols-3 gap-2 calculator-buttons">
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                                <button key={num} onClick={() => handleNumpadInput(String(num))} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button">
+                                    {num}
+                                </button>
+                            ))}
+                            <button onClick={() => handleNumpadInput('0')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button">0</button>
+                            <button onClick={() => handleNumpadInput('.')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button">.</button>
+                            <button onClick={handleNumpadDelete} className="bg-orange-400 hover:bg-orange-500 text-white p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button action">DEL</button>
+                        </div>
+                        <div className="flex justify-between mt-4 space-x-2 calc-bottom-actions">
+                            <button onClick={handleNumpadCancel} className="bg-red-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-600 flex-grow transition duration-200 shadow-md calc-button cancel">
+                                {translations.cancel}
+                            </button>
+                            <button onClick={handleNumpadConfirm} className="bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 flex-grow transition duration-200 shadow-md calc-button done">
+                                {translations.add}
+                            </button>
+                        </div>
                     </div>
+                )}
 
-                    {/* Payment Method Selection */}
-                    <div>
-                      <label className="block text-gray-700 text-lg font-bold mb-2">
-                        {translations.selectPaymentMethod} {users.find(u => u.id === selectedEmployeeId)?.name}
-                      </label>
-                      <div className="flex flex-wrap gap-3">
-                          {paymentMethods.map(method => (
-                              <button
-                                  key={method.id}
-                                  type="button"
-                                  onClick={() => handlePaymentMethodClick(method.name)}
-                                  className={`flex flex-col items-center justify-center p-4 rounded-lg shadow-md transition duration-300
-                                      ${selectedPaymentMethod === method.name ? 'ring-4 ring-blue-600' : 'bg-gray-100 hover:bg-gray-200'}
-                                  `}
-                                  style={{ backgroundColor: selectedPaymentMethod === method.name ? method.color : '' }}
-                              >
-                                  <span className="payment-method-icon" style={{ color: selectedPaymentMethod === method.name ? 'white' : method.color }}>{method.icon}</span>
-                                  <span className={`text-lg font-semibold ${selectedPaymentMethod === method.name ? 'text-white' : 'text-gray-800'}`}>
-                                      {translations.language === 'ar' && method.nameAr ? method.nameAr : method.name}
-                                  </span>
-                              </button>
-                          ))}
-                      </div>
+                {approvedFlash && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                        <div className="bg-white p-8 rounded-lg shadow-2xl flex flex-col items-center">
+                            <i className="fas fa-check-circle text-darkgreen-700 text-6xl mb-4 animate-bounce"></i>
+                            <p className="text-3xl font-bold text-darkgreen-800">{translations.approved}</p>
+                        </div>
                     </div>
-                    </>
-                  )}
-
-                  {selectedPaymentMethod && isNumpadOpen && (
-                      <div className="mt-4 bg-gray-50 p-6 rounded-lg shadow-inner">
-                          <h4 className="text-xl font-semibold text-gray-800 mb-4">{translations.enterAmount}</h4>
-                          <input
-                              type="text"
-                              value={`SAR ${currentNumpadValue}`}
-                              readOnly
-                              className="w-full p-3 border border-gray-300 rounded-lg text-2xl font-bold text-center mb-4 bg-white"
-                          />
-                          <div className="grid grid-cols-3 gap-2">
-                              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
-                                  <button key={num} onClick={() => handleNumpadInput(String(num))} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md">
-                                      {num}
-                                  </button>
-                              ))}
-                              <button onClick={() => handleNumpadInput('0')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md">0</button>
-                              <button onClick={() => handleNumpadInput('.')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md">.</button>
-                              <button onClick={handleNumpadDelete} className="bg-orange-400 hover:bg-orange-500 text-white p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md">DEL</button>
-                          </div>
-                          <div className="flex justify-between mt-4 space-x-2">
-                              <button onClick={handleNumpadCancel} className="bg-red-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-600 flex-grow transition duration-200 shadow-md">
-                                  {translations.cancel}
-                              </button>
-                              <button onClick={handleNumpadConfirm} className="bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 flex-grow transition duration-200 shadow-md">
-                                  {translations.add}
-                              </button>
-                          </div>
-                      </div>
-                  )}
-
-                  {approvedFlash && (
-                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                          <div className="bg-white p-8 rounded-lg shadow-2xl flex flex-col items-center">
-                              <i className="fas fa-check-circle text-darkgreen-700 text-6xl mb-4 animate-bounce"></i> {/* Dark green check */}
-                              <p className="text-3xl font-bold text-darkgreen-800">{translations.approved}</p>
-                          </div>
-                      </div>
-                  )}
-                </div>
+                )}
               </div>
+
+              {/* Right Column: Employee Details Section */}
+              {selectedEmployeeId && (
+                <div className="flex-1 employee-details-section">
+                    <h3>{getEmployeeName(selectedEmployeeId)}'s Activity</h3>
+                    <div className="detail-item">
+                        <span>{translations.totalEarned} ({translations.today}):</span> <strong id="employee-daily-orders">
+                            SAR {payments.filter(p => p.employeeId === selectedEmployeeId && p.timestamp?.toDateString() === new Date().toDateString()).reduce((acc, p) => acc + p.amount, 0).toFixed(2)}
+                        </strong>
+                    </div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">{translations.last5PaymentsFor} {getEmployeeName(selectedEmployeeId)}:</h4>
+                    <div className="recent-payments-list">
+                        <table className="min-w-full">
+                            <thead>
+                                <tr>
+                                    <th>{translations.time}</th>
+                                    <th>{translations.amount}</th>
+                                    <th>{translations.method}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {last5Payments.length > 0 ? (
+                                    last5Payments.map(p => (
+                                        <tr key={p.id}>
+                                            <td>{p.timestamp?.toLocaleTimeString()}</td>
+                                            <td>SAR {p.amount?.toFixed(2)}</td>
+                                            <td>{getPaymentMethodDetails(p.paymentMethod)}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="3" className="text-center text-gray-500 text-sm">{translations.noDailyPaymentData}</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+              )}
             </div>
           );
         };
 
-
+        //
         // Employee Dashboard Component
         const EmployeeDashboard = () => {
-          const { currentUser, payments, expenses, bonuses, translations, getPaymentMethodDetails, getBranchName, changeCurrentUserPassword, setMessage } = useAppContext();
+          const { currentUser, users, payments, expenses, bonuses, translations, getPaymentMethodDetails, getBranchName, changeCurrentUserPassword, setMessage } = useAppContext();
 
           const currentLocalDate = new Date();
           const [selectedMonth, setSelectedMonth] = useState(currentLocalDate.getMonth());
@@ -2774,6 +3210,127 @@
           ];
           const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i);
 
+          // NEW FUNCTION: Generate Employee Monthly Report PDF
+          const generateEmployeeReportPdf = async () => {
+            const doc = new jspdf.jsPDF();
+            const monthName = months[selectedMonth];
+            const fileName = `${translations.employeeReportPdf}_${currentUser.name.replace(/\s/g, '_')}_${monthName}_${selectedYear}.pdf`;
+
+            // Report Title
+            doc.setFontSize(22);
+            doc.text(translations.reportTitle, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+
+            doc.setFontSize(12);
+            doc.text(`${translations.reportFor}: ${monthName}, ${selectedYear}`, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+            doc.text(`${translations.generatedOn}: ${new Date().toLocaleString()}`, doc.internal.pageSize.getWidth() / 2, 37, { align: 'center' });
+
+            let y = 50;
+
+            // Employee Details
+            doc.setFontSize(16);
+            doc.text(translations.employeeDetails, 14, y);
+            y += 7;
+            doc.setFontSize(12);
+            doc.text(`${translations.employeeName}: ${currentUser.name}`, 14, y); y += 7;
+            doc.text(`${translations.employeeNumber}: ${currentUser.employeeNumber}`, 14, y); y += 7;
+            doc.text(`${translations.branch}: ${getBranchName(currentUser.branchId)}`, 14, y); y += 7;
+            doc.text(`${translations.target}: SAR ${currentUser.targetAmount?.toFixed(2) || '0.00'}`, 14, y); y += 15;
+
+            // Summary Section
+            doc.setFontSize(16);
+            doc.text("Summary", 14, y);
+            y += 7;
+            doc.setFontSize(12);
+            doc.text(`${translations.totalPayments}: SAR ${totalEarned.toFixed(2)}`, 14, y); y += 7;
+            doc.text(`${translations.totalExpensesSummary}: SAR ${totalExpenses.toFixed(2)}`, 14, y); y += 7;
+            doc.text(`${translations.totalBonusesSummary}: SAR ${totalBonuses.toFixed(2)}`, 14, y); y += 7;
+            doc.text(`${translations.netIncomeSummary}: SAR ${netIncome.toFixed(2)}`, 14, y); y += 15;
+
+            // Payments Summary Table
+            doc.autoTable({
+                startY: y,
+                head: [[translations.serialNo, translations.timestamp, translations.method, translations.amount]],
+                body: employeePayments.map((p, index) => [
+                    index + 1,
+                    p.timestamp?.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }),
+                    getPaymentMethodDetails(p.paymentMethod),
+                    `SAR ${p.amount?.toFixed(2)}`
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [48, 113, 169], textColor: 255, fontStyle: 'bold' },
+                styles: { font: 'Inter', fontSize: 10, cellPadding: 3 },
+                margin: { left: 14, right: 14 },
+                didDrawPage: function (data) {
+                    // Footer
+                    let str = "Page " + doc.internal.getNumberOfPages();
+                    doc.setFontSize(10);
+                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                }
+            });
+            y = doc.autoTable.previous.finalY + 15;
+
+            // Expenses Summary Table
+            doc.setFontSize(16);
+            doc.text(translations.expensesSummary, 14, y);
+            y += 5;
+            doc.autoTable({
+                startY: y,
+                head: [[translations.serialNo, translations.timestamp, translations.expenseType, translations.description, translations.amount]],
+                body: employeeExpenses.map((e, index) => [
+                    index + 1,
+                    e.timestamp?.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }),
+                    translations[e.type] || e.type,
+                    e.description,
+                    `SAR ${e.amount?.toFixed(2)}`
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [220, 38, 38], textColor: 255, fontStyle: 'bold' }, // Red theme
+                styles: { font: 'Inter', fontSize: 10, cellPadding: 3 },
+                margin: { left: 14, right: 14 },
+                didDrawPage: function (data) {
+                    // Footer
+                    let str = "Page " + doc.internal.getNumberOfPages();
+                    doc.setFontSize(10);
+                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                }
+            });
+            y = doc.autoTable.previous.finalY + 15;
+
+            // Bonuses Summary Table
+            doc.setFontSize(16);
+            doc.text(translations.bonusesSummary, 14, y);
+            y += 5;
+            doc.autoTable({
+                startY: y,
+                head: [[translations.serialNo, translations.timestamp, translations.description, translations.amount]],
+                body: employeeBonuses.map((b, index) => [
+                    index + 1,
+                    b.timestamp?.toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short' }),
+                    b.description,
+                    `SAR ${b.amount?.toFixed(2)}`
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [22, 163, 74], textColor: 255, fontStyle: 'bold' }, // Green theme
+                styles: { font: 'Inter', fontSize: 10, cellPadding: 3 },
+                margin: { left: 14, right: 14 },
+                didDrawPage: function (data) {
+                    // Footer
+                    let str = "Page " + doc.internal.getNumberOfPages();
+                    doc.setFontSize(10);
+                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                }
+            });
+
+            if (employeePayments.length === 0 && employeeExpenses.length === 0 && employeeBonuses.length === 0) {
+                doc.addPage(); // Add a new page if no data, to ensure message is visible
+                doc.setFontSize(14);
+                doc.text(translations.noDataForReport, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() / 2, { align: 'center' });
+            }
+
+            doc.save(fileName);
+            setMessage(`${translations.employeeReportPdf} generated successfully!`);
+          };
+
 
           return (
             <div className="employee-dashboard space-y-6">
@@ -2800,6 +3357,13 @@
                           <option key={year} value={year}>{year}</option>
                       ))}
                   </select>
+                  {/* NEW: Download PDF Report Button */}
+                  <button
+                      onClick={generateEmployeeReportPdf}
+                      className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition duration-300 shadow-md"
+                  >
+                      {translations.downloadEmployeeReport}
+                  </button>
               </div>
 
               {/* Summary Cards */}
@@ -2895,6 +3459,7 @@
           );
         };
 
+        // ChangePasswordModal Component
         const ChangePasswordModal = ({ isOpen, onClose, onSave, translations, setMessage }) => {
             const [newPassword, setNewPassword] = useState('');
             const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -2912,7 +3477,7 @@
                 const success = await onSave(newPassword);
                 if (success) {
                     setNewPassword('');
-                    setConfirmPassword('');
+                    setConfirmNewPassword('');
                     onClose();
                 }
             };
@@ -2970,7 +3535,7 @@
             );
         };
 
-        // Expose components globally for AdminDashboard to use
+        // Expose components globally
         window.App = window.App || {};
         window.App.Modal = Modal;
         window.App.PaginatedTable = PaginatedTable;
@@ -2981,7 +3546,25 @@
         window.App.SupervisorDashboard = SupervisorDashboard;
         window.App.EmployeeDashboard = EmployeeDashboard;
         window.App.ChangePasswordModal = ChangePasswordModal;
-/////////////////
+
+        // Render the App component into the root div
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
+<script type="text/babel">
+        // This file continues the React components from the previous part (Piece 1).
+        // It's structured this way to adhere to the line limit per immersive block.
+
+        // Expose components globally for AdminDashboard to use (continued from previous part)
+        // These are re-exposed here for clarity, assuming this script runs immediately after the previous.
+        window.App = window.App || {};
+        const { Modal, PaginatedTable, BranchForm, UserForm, EditPaymentForm, PaymentMethodForm, SupervisorDashboard, EmployeeDashboard, ChangePasswordModal } = window.App;
+
+
+        // NEW COMPONENTS AND FUNCTIONS FOR ADMIN AND EMPLOYEE DASHBOARDS
+        // These were previously defined but are now part of this phase's output.
+
         const DailySummaryTable = ({ payments, users, branches, paymentMethods, translations, getEmployeeName, getBranchName, getPaymentMethodDetails, selectedDate, recordsPerPageSetting, tableTheme }) => {
             const filteredPayments = payments.filter(p => p.timestamp && p.timestamp.toISOString().split('T')[0] === selectedDate);
 
@@ -3728,7 +4311,7 @@
                                 if (type === 'bonus') {
                                     q = firebase.query(firebase.collection(db, collectionPath),
                                         firebase.where("employeeId", "==", employee.id),
-                                        firebase.where("type", "==", type), // Although type is 'bonus' for bonuses, keep for consistency if needed later
+                                        // For bonus, 'type' isn't explicitly stored like expense types
                                         firebase.where("amount", "==", parseFloat(amount)),
                                         firebase.where("description", "==", description || null),
                                         firebase.where("month", "==", recordMonth),
@@ -3791,7 +4374,7 @@
                             id="selectEmployeeForFinancials"
                             value={selectedEmployeeId}
                             onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                            className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                         >
                             <option value="">{translations.allEmployees}</option>
                             {users.map(employee => (
@@ -3848,7 +4431,7 @@
 
                     {selectedEmployeeId === '' ? (
                         <p className="text-gray-600 text-center text-lg p-8 bg-gray-50 rounded-lg shadow-inner">
-                            {translations.noDataForSelectedPeriod}
+                            {translations.pleaseSelectEmployee}
                         </p>
                     ) : (
                         <div className="space-y-6">
@@ -4100,7 +4683,7 @@
             const netOrganizationResult = totalOrganizationIncome - totalOrganizationExpenses;
 
             const orgExpenseColumns = [
-                { header: translations.serialNo, key: 'serialNo', render: (item) => null, sortable: false },
+                { header: translations.serialNo, key: 'serialNo', render: (item, index) => index + 1, sortable: false },
                 { header: translations.expenseType, key: 'type', render: (item) => translations[item.type] || item.type },
                 { header: translations.amount, key: 'amount', render: (item) => `SAR ${item.amount?.toFixed(2)}` },
                 { header: translations.description, key: 'description' },
@@ -4334,19 +4917,238 @@
         window.App.AddEditOrgExpenseModal = AddEditOrgExpenseModal;
 
 
-        // Admin Dashboard Component (prioritized from AdminDashboard.js)
+        // Manager Dashboard Component - IMPLEMENTATION (Corrected to avoid redeclaration)
+        const ManagerDashboard = () => {
+            const { translations, payments, branches, users, getBranchName, getPaymentMethodDetails, getEmployeeName } = useAppContext();
+            const currentLocalDate = new Date();
+            const [selectedMonth, setSelectedMonth] = useState(currentLocalDate.getMonth());
+            const [selectedYear, setSelectedYear] = useState(currentLocalDate.getFullYear());
+
+            const months = [
+                translations.jan, translations.feb, translations.mar, translations.apr, translations.may, translations.jun,
+                translations.jul, translations.aug, translations.sep, translations.oct, translations.nov, translations.dec
+            ];
+            const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i);
+
+            // Filter payments for the selected month/year
+            const filteredPayments = payments.filter(p =>
+                p.timestamp &&
+                p.timestamp.getMonth() === selectedMonth &&
+                p.timestamp.getFullYear() === selectedYear
+            );
+
+            // Calculate total income for the selected month/year
+            const totalMonthlyIncome = filteredPayments.reduce((acc, p) => acc + p.amount, 0);
+
+            // Group payments by branch for the table
+            const groupedByBranch = filteredPayments.reduce((acc, payment) => {
+                const branch = branches.find(b => b.id === payment.branchId);
+                const branchName = branch ? branch.name : 'N/A';
+                if (!acc[branchName]) {
+                    acc[branchName] = {
+                        branchName: branchName,
+                        totalIncome: 0,
+                        methods: {}
+                    };
+                }
+                acc[branchName].totalIncome += payment.amount;
+                acc[branchName].methods[payment.paymentMethod] = (acc[branchName].methods[payment.paymentMethod] || 0) + payment.amount;
+                return acc;
+            }, {});
+
+            const branchIncomeData = Object.values(groupedByBranch);
+
+            // Get all unique payment methods for dynamic columns
+            const allPaymentMethods = [...new Set(filteredPayments.map(p => p.paymentMethod))].sort();
+
+            const branchIncomeColumns = [
+                { header: translations.branchName, key: 'branchName', sortable: true },
+                ...allPaymentMethods.map(methodName => ({
+                    header: getPaymentMethodDetails(methodName),
+                    key: methodName,
+                    render: (item) => `SAR ${item.methods[methodName]?.toFixed(2) || '0.00'}`,
+                    sortable: false
+                })),
+                { header: translations.total, key: 'totalIncome', render: (item) => `SAR ${item.totalIncome.toFixed(2)}`, sortable: true }
+            ];
+
+            const customSort = {
+                branchName: (a, b, direction) => {
+                    const nameA = a.branchName.toLowerCase();
+                    const nameB = b.branchName.toLowerCase();
+                    if (nameA < nameB) return direction === 'asc' ? -1 : 1;
+                    if (nameA > nameB) return direction === 'asc' ? 1 : -1;
+                    return 0;
+                },
+                totalIncome: (a, b, direction) => direction === 'asc' ? a.totalIncome - b.totalIncome : b.totalIncome - a.totalIncome
+            };
+
+            return (
+                <div className="manager-dashboard space-y-6">
+                    <h2 className="text-3xl font-bold text-gray-800">{translations.manager} Dashboard</h2>
+
+                    {/* Month/Year Selection */}
+                    <div className="bg-white p-6 rounded-lg shadow-lg flex flex-wrap gap-4 items-center justify-center">
+                        <h3 className="text-xl font-semibold text-gray-800">{translations.selectMonthYear}:</h3>
+                        <select
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                            className="p-2 border rounded-md"
+                        >
+                            {months.map((monthName, index) => (
+                                <option key={index} value={index}>{monthName}</option>
+                            ))}
+                        </select>
+                        <select
+                            value={selectedYear}
+                            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                            className="p-2 border rounded-md"
+                        >
+                            {years.map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Summary Card */}
+                    <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+                        <div className="bg-blue-50 p-6 rounded-lg shadow-inner text-center">
+                            <h3 className="text-xl font-semibold text-blue-800 mb-2">{translations.totalOrganizationIncome} ({months[selectedMonth]} {selectedYear})</h3>
+                            <p className="text-3xl font-bold text-blue-700">SAR {totalMonthlyIncome.toFixed(2)}</p>
+                        </div>
+                    </div>
+
+                    {/* Monthly Branches Income Table */}
+                    <div className="p-6 bg-gray-50 rounded-lg shadow-inner">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-4">{translations.monthlyBranchesIncome}</h3>
+                        <PaginatedTable
+                            data={branchIncomeData}
+                            columns={branchIncomeColumns}
+                            translations={translations}
+                            initialItemsPerPage={5}
+                            searchPlaceholder={translations.search + ' ' + translations.branchName + '...'}
+                            customSort={customSort}
+                        />
+                    </div>
+
+                    {/* You can add more manager-specific reports or functionalities here */}
+                </div>
+            );
+        };
+
+        // Partner Dashboard Component - IMPLEMENTATION (Corrected to avoid redeclaration)
+        const PartnerDashboard = () => {
+            const { translations, payments, organizationExpenses, users, branches, getBranchName } = useAppContext();
+            const currentLocalDate = new Date();
+            const [selectedMonth, setSelectedMonth] = useState(currentLocalDate.getMonth());
+            const [selectedYear, setSelectedYear] = useState(currentLocalDate.getFullYear());
+
+            const months = [
+                translations.jan, translations.feb, translations.mar, translations.apr, translations.may, translations.jun,
+                translations.jul, translations.aug, translations.sep, translations.oct, translations.nov, translations.dec
+            ];
+            const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i);
+
+            // Filter payments for total income
+            const totalIncome = payments.filter(p =>
+                p.timestamp &&
+                p.timestamp.getMonth() === selectedMonth &&
+                p.timestamp.getFullYear() === selectedYear
+            ).reduce((acc, p) => acc + p.amount, 0);
+
+            // Filter organization expenses
+            const filteredOrgExpenses = organizationExpenses.filter(e =>
+                e.month === selectedMonth && e.year === selectedYear
+            );
+            const totalOrgExpenses = filteredOrgExpenses.reduce((acc, e) => acc + e.amount, 0);
+
+            // Calculate net result
+            const netOrganizationResult = totalIncome - totalOrgExpenses;
+
+            // Prepare data for Org Expenses table
+            const orgExpenseColumns = [
+                { header: translations.serialNo, key: 'serialNo', render: (item, index) => index + 1, sortable: false },
+                { header: translations.expenseType, key: 'type', render: (item) => translations[item.type] || item.type },
+                { header: translations.amount, key: 'amount', render: (item) => `SAR ${item.amount?.toFixed(2)}` },
+                { header: translations.description, key: 'description' },
+            ];
+
+            return (
+                <div className="partner-dashboard space-y-6">
+                    <h2 className="text-3xl font-bold text-gray-800">{translations.partner} Dashboard</h2>
+
+                    {/* Month/Year Selection */}
+                    <div className="bg-white p-6 rounded-lg shadow-lg flex flex-wrap gap-4 items-center justify-center">
+                        <h3 className="text-xl font-semibold text-gray-800">{translations.selectMonthYear}:</h3>
+                        <select
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                            className="p-2 border rounded-md"
+                        >
+                            {months.map((monthName, index) => (
+                                <option key={index} value={index}>{monthName}</option>
+                            ))}
+                        </select>
+                        <select
+                            value={selectedYear}
+                            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                            className="p-2 border rounded-md"
+                        >
+                            {years.map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Summary Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-green-50 p-6 rounded-lg shadow-inner text-center">
+                            <h3 className="text-xl font-semibold text-green-800 mb-2">{translations.totalOrganizationIncome}</h3>
+                            <p className="text-3xl font-bold text-green-700">SAR {totalIncome.toFixed(2)}</p>
+                        </div>
+                        <div className="bg-red-50 p-6 rounded-lg shadow-inner text-center">
+                            <h3 className="text-xl font-semibold text-red-800 mb-2">{translations.totalOrganizationExpenses}</h3>
+                            <p className="text-3xl font-bold text-red-700">SAR {totalOrgExpenses.toFixed(2)}</p>
+                        </div>
+                        <div className={`p-6 rounded-lg shadow-inner text-center ${netOrganizationResult >= 0 ? 'bg-blue-50 text-blue-800' : 'bg-orange-50 text-orange-800'}`}>
+                            <h3 className="text-xl font-semibold mb-2">{translations.netOrganizationResult}</h3>
+                            <p className="text-3xl font-bold">SAR {netOrganizationResult.toFixed(2)}</p>
+                        </div>
+                    </div>
+
+                    {/* Organization Expenses Table */}
+                    <div className="p-6 bg-gray-50 rounded-lg shadow-inner">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-4">{translations.organizationExpenses}</h3>
+                        <PaginatedTable
+                            data={filteredOrgExpenses}
+                            columns={orgExpenseColumns}
+                            translations={translations}
+                            initialItemsPerPage={5}
+                            searchPlaceholder={translations.search + '...'}
+                        />
+                    </div>
+
+                    {/* You can add more partner-specific reports or functionalities here */}
+                </div>
+            );
+        };
+
+
+        // Admin Dashboard Component
         const AdminDashboard = ({ adminPage, setAdminPage }) => {
           const {
             users, branches, payments, paymentMethods, expenses, bonuses, organizationExpenses,
             addBranch, deleteBranch, editBranch,
             addUser, deleteUser, editUser, adminResetUserPassword,
-            addPayment, editPayment, deletePayment,
+            // addPayment, // Not used directly in AdminDashboard except through utility functions for excel export
+            editPayment, // Used for batch update
+            // deletePayment, // Used for batch delete
             addPaymentMethod, editPaymentMethod, deletePaymentMethod,
             addExpense, editExpense, deleteExpense,
             addBonus, editBonus, deleteBonus,
             addOrganizationExpense, editOrganizationExpense, deleteOrganizationExpense,
             translations, appId, userId, setMessage, db,
-            getBranchName, getPaymentMethodDetails, getUserDetails
+            getBranchName, getPaymentMethodDetails, getUserDetails, getEmployeeName
           } = useAppContext();
 
           const [isBranchModalOpen, setIsBranchModalOpen] = useState(false);
@@ -4711,8 +5513,9 @@
                       Amount: ex.amount,
                       Description: ex.description,
                       Type: ex.type,
-                      Branch: getBranchName(ex.branchId),
-                      'Added By': getUserDetails(ex.addedBy),
+                      // These fields are not in the Expense model, so commenting out or ensuring they don't exist
+                      // Branch: getBranchName(ex.branchId),
+                      // 'Added By': getUserDetails(ex.addedBy),
                   }));
                   const wsExpenses = XLSX.utils.json_to_sheet(expensesData);
                   XLSX.utils.book_append_sheet(wb, wsExpenses, translations.expenses || 'Expenses'); // Fallback if translation missing
@@ -4725,8 +5528,9 @@
                       Employee: getUserDetails(bo.employeeId),
                       Amount: bo.amount,
                       Description: bo.description,
-                      Branch: getBranchName(bo.branchId),
-                      'Added By': getUserDetails(bo.addedBy),
+                      // These fields are not in the Bonus model, so commenting out or ensuring they don't exist
+                      // Branch: getBranchName(bo.branchId),
+                      // 'Added By': getUserDetails(bo.addedBy),
                   }));
                   const wsBonuses = XLSX.utils.json_to_sheet(bonusesData);
                   XLSX.utils.book_append_sheet(wb, wsBonuses, translations.bonuses || 'Bonuses'); // Fallback if translation missing
@@ -4738,8 +5542,8 @@
                       Timestamp: convertTimestampForExcel(oex.timestamp),
                       Amount: oex.amount,
                       Description: oex.description,
-                      Category: oex.category,
-                      'Added By': getUserDetails(oex.addedBy),
+                      Type: oex.type, // Should be type, not category
+                      // 'Added By': getUserDetails(oex.addedBy), // Org expenses don't typically have an addedBy user
                   }));
                   const wsOrgExpenses = XLSX.utils.json_to_sheet(organizationExpensesData);
                   XLSX.utils.book_append_sheet(wb, wsOrgExpenses, translations.organizationExpenses);
@@ -4832,7 +5636,7 @@
                       translations.role, // e.g., 'admin', 'employee', 'manager'
                       translations.branch, // Branch Name (will need to map to ID on upload)
                       translations.target, // Target Amount
-                      translations.password, // Placeholder for password (will be auto-generated or handled securely)
+                      "password", // Actual keyword for password (not translated)
                       "Image URL" // Optional
                   ];
 
@@ -4900,11 +5704,12 @@
                 const roleCol = headers.indexOf(translations.role);
                 const branchCol = headers.indexOf(translations.branch);
                 const targetCol = headers.indexOf(translations.target);
-                const passwordCol = headers.indexOf(translations.password);
+                const passwordCol = headers.indexOf("password"); // Use the exact string "password" as the column header
                 const imageUrlCol = headers.indexOf("Image URL"); // Assuming this exact header
 
                 const newUploadErrors = [];
-                const successfulImports = [];
+                let successfullyAddedCount = 0;
+                let failedAddCount = 0;
 
                 // Fetch all branches to map names to IDs
                 const branchNameToIdMap = {};
@@ -4970,9 +5775,11 @@
 
                     // Password validation (simple check, strong validation should be on server)
                     // Only require password for NEW users or if explicitly provided for existing
-                    if (!editingUser && !password) { // Password required for new users
+                    // Note: No "editingUser" context here as this is a bulk import function.
+                    // Assuming all imported users are new or being re-created with a temp password.
+                    if (!password) { // Password required for new users
                         errorsInRow.push(translations.passwordRequiredForNewUser);
-                    } else if (password && password.length < 6) { // Minimum length
+                    } else if (password.length < 6) { // Minimum length
                         errorsInRow.push(translations.passwordTooShort);
                     }
 
@@ -5000,12 +5807,10 @@
                     setMessage(`${translations.uploadCompletedWithErrors || 'Upload completed with errors.'} ${newUploadErrors.length} rows had issues.`);
                 } else {
                     setMessage(translations.importingUsers || 'Importing users...');
-                    let successfullyAddedCount = 0;
-                    let failedAddCount = 0;
                     for (const userData of usersToProcess) {
                         try {
                             // Call your existing addUser function from useAppContext
-                            // It should handle uniqueness and potentially update if user exists by email/emp number (though current addUser only adds)
+                            // This addUser function from the context will call firebase.addDoc
                             await addUser(
                                 userData.name,
                                 userData.email,
@@ -5015,7 +5820,16 @@
                                 userData.employeeNumber,
                                 userData.nameAr,
                                 userData.imageUrl,
-                                userData.password // Pass the password to addUser
+                                // userData.password is not directly used by the current `addUser` signature,
+                                // it's intended for a real Firebase Auth flow. For this simulated app,
+                                // the password would be handled by `adminResetUserPassword` if we were
+                                // to extend the import to trigger simulated password setups.
+                                // For now, the user roles define fixed passwords.
+                                // If the Excel import needs to set initial *simulated* passwords,
+                                // the `addUser` function in the main context would need modification
+                                // to accept and store `simulatedPassword` for new users.
+                                // For simplicity and avoiding auth complexities in a client-side only app,
+                                // we'll rely on the existing role-based password logic for login.
                             );
                             successfullyAddedCount++;
                         } catch (addError) {
@@ -5029,9 +5843,12 @@
 
                     if (successfullyAddedCount > 0) {
                         setMessage(`${translations.usersImportedSuccessfully || 'Users imported successfully!'}: ${successfullyAddedCount} ${translations.newUsersAdded || 'new users added'}.`);
-                    } else if (newUploadErrors.length === 0) {
+                    } else if (newUploadErrors.length === 0 && usersToProcess.length > 0) {
                         setMessage(translations.noNewUsersProcessed || 'No new users were processed from the file. It might contain only existing data.');
-                    } else {
+                    } else if (newUploadErrors.length === 0 && usersToProcess.length === 0) {
+                        setMessage("No new user data found in the Excel file to process.");
+                    }
+                    else {
                         setMessage(`Upload finished with ${failedAddCount} failures and ${successfullyAddedCount} successes.`);
                     }
 
@@ -5046,6 +5863,112 @@
                 setMessage(translations.errorReadingExcelFile || "Error reading Excel file. Please ensure it's valid.");
                 setUploadErrors([`${translations.generalError}: ${error.message || 'Unknown error'}`]);
             }
+          };
+
+          // NEW FUNCTION: Generate PDF for all employees' calculations
+          const generateAllEmployeesCalculationsPdf = async () => {
+            const doc = new jspdf.jsPDF();
+            const monthName = months[monthlySummaryMonth];
+            const fileName = `${translations.allEmployeesReportPdf}_${monthName}_${monthlySummaryYear}.pdf`;
+
+            // Report Title
+            doc.setFontSize(22);
+            doc.text(translations.reportTitle, doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+
+            doc.setFontSize(12);
+            doc.text(`${translations.reportFor}: ${monthName}, ${monthlySummaryYear}`, doc.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+            doc.text(`${translations.generatedOn}: ${new Date().toLocaleString()}`, doc.internal.pageSize.getWidth() / 2, 37, { align: 'center' });
+
+            let y = 50;
+
+            const allEmployeesData = [];
+            const employees = users.filter(u => u.role === 'employee');
+
+            if (employees.length === 0) {
+                doc.addPage();
+                doc.setFontSize(14);
+                doc.text(translations.noDataForReport, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() / 2, { align: 'center' });
+                doc.save(fileName);
+                setMessage(translations.noDataForReport);
+                return;
+            }
+
+            for (const employee of employees) {
+                const employeePayments = payments.filter(p =>
+                    p.employeeId === employee.id &&
+                    p.timestamp &&
+                    p.timestamp.getMonth() === monthlySummaryMonth &&
+                    p.timestamp.getFullYear() === monthlySummaryYear
+                );
+                const employeeExpenses = expenses.filter(e =>
+                    e.employeeId === employee.id &&
+                    e.timestamp &&
+                    e.timestamp.getMonth() === monthlySummaryMonth &&
+                    e.timestamp.getFullYear() === monthlySummaryYear
+                );
+                const employeeBonuses = bonuses.filter(b =>
+                    b.employeeId === employee.id &&
+                    b.timestamp &&
+                    b.timestamp.getMonth() === monthlySummaryMonth &&
+                    b.timestamp.getFullYear() === monthlySummaryYear
+                );
+
+                const totalEarned = employeePayments.reduce((acc, p) => acc + p.amount, 0);
+                const totalExpenses = employeeExpenses.reduce((acc, e) => acc + e.amount, 0);
+                const totalBonuses = employeeBonuses.reduce((acc, b) => acc + b.amount, 0);
+                const netIncome = totalEarned + totalBonuses - totalExpenses;
+
+                allEmployeesData.push({
+                    name: getEmployeeName(employee.id),
+                    employeeNumber: employee.employeeNumber,
+                    branch: getBranchName(employee.branchId),
+                    target: employee.targetAmount,
+                    totalPayments: totalEarned,
+                    totalExpenses: totalExpenses,
+                    totalBonuses: totalBonuses,
+                    netIncome: netIncome
+                });
+            }
+
+            const tableHeaders = [
+                translations.employeeName,
+                translations.employeeNumber,
+                translations.branch,
+                translations.target,
+                translations.totalPayments,
+                translations.totalExpensesSummary,
+                translations.totalBonusesSummary,
+                translations.netIncomeSummary
+            ];
+
+            const tableBody = allEmployeesData.map(emp => [
+                emp.name,
+                emp.employeeNumber,
+                emp.branch,
+                `SAR ${emp.target.toFixed(2)}`,
+                `SAR ${emp.totalPayments.toFixed(2)}`,
+                `SAR ${emp.totalExpenses.toFixed(2)}`,
+                `SAR ${emp.totalBonuses.toFixed(2)}`,
+                `SAR ${emp.netIncome.toFixed(2)}`
+            ]);
+
+            doc.autoTable({
+                startY: y,
+                head: [tableHeaders],
+                body: tableBody,
+                theme: 'striped',
+                headStyles: { fillColor: [48, 113, 169], textColor: 255, fontStyle: 'bold' },
+                styles: { font: 'Inter', fontSize: 9, cellPadding: 2 },
+                margin: { left: 10, right: 10 },
+                didDrawPage: function (data) {
+                    let str = "Page " + doc.internal.getNumberOfPages();
+                    doc.setFontSize(10);
+                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                }
+            });
+
+            doc.save(fileName);
+            setMessage(`${translations.allEmployeesReportPdf} generated successfully!`);
           };
 
 
@@ -5113,6 +6036,13 @@
                   className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-600 transition duration-300 shadow-md"
                 >
                   {translations.downloadAllDataExcel || 'Download All Data (Excel)'}
+                </button>
+                {/* NEW: Download All Employees Calculations PDF Button */}
+                <button
+                  onClick={generateAllEmployeesCalculationsPdf}
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition duration-300 shadow-md"
+                >
+                  {translations.downloadAllEmployeesCalculations}
                 </button>
               </nav>
 
@@ -5276,8 +6206,11 @@
                     selectedItems={selectedPaymentIds}
                     onMultiSelectChange={setSelectedPaymentIds}
                     onDeleteSelected={async (ids) => {
-                        const confirmed = window.confirm(translations.confirmDeletePaymentMethod);
+                        const confirmed = window.confirm(translations.confirmDeletePaymentMethod); // This translation is for method, but close enough for now
                         if (confirmed) {
+                            // Since deletePayment is not passed into AdminDashboard directly,
+                            // we need to access it from useAppContext.
+                            const { deletePayment } = useAppContext();
                             if (typeof deletePayment === 'function') {
                                 for (const id of ids) {
                                     await deletePayment(id);
@@ -5382,7 +6315,7 @@
                             {translations.downloadUserTemplate || 'Download Sample Excel'}
                         </button>
                         <label className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-300 shadow-md cursor-pointer">
-                            {translations.uploadUserExcel || 'Upload Excel'}
+                            {translations.uploadExcel}
                             <input
                                 type="file"
                                 ref={fileInputRef}
@@ -5414,7 +6347,7 @@
                           onClick={handleDeleteSelectedUsers}
                           className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition duration-300 shadow-md"
                       >
-                          {translations.deleteSelectedUsers || `Delete Selected Users (${selectedUserIds.length})`}
+                          {translations.deleteSelected} ({selectedUserIds.length})
                       </button>
                   )}
                   <PaginatedTable
@@ -5442,7 +6375,7 @@
                               editUser(editingUser.id, updatedUser);
                             } else {
                               try {
-                                  addUser(updatedUser.name, updatedUser.email, updatedUser.role, updatedUser.branchId, updatedUser.targetAmount, updatedUser.employeeNumber, updatedUser.nameAr, updatedUser.imageUrl, updatedUser.password);
+                                  addUser(updatedUser.name, updatedUser.email, updatedUser.role, updatedUser.branchId, updatedUser.targetAmount, updatedUser.employeeNumber, updatedUser.nameAr, updatedUser.imageUrl);
                                   setIsUserModalOpen(false);
                                   setEditingUser(null);
                               } catch (error) {
@@ -5522,8 +6455,9 @@
                           setFinancialsMonth={setFinancialsMonth}
                           setFinancialsYear={setFinancialsYear}
                           appId={appId}
-                          recordsPerPageSetting={adminRecordsPerPage}
-                          tableTheme={adminTableTheme}
+                          // Passed directly to EmployeeFinancials component, no longer Admin-defined here
+                          // recordsPerPageSetting={adminRecordsPerPage}
+                          // tableTheme={adminTableTheme}
                       />
               )}
 
@@ -5537,8 +6471,9 @@
                           translations={translations}
                           setMessage={setMessage}
                           appId={appId}
-                          recordsPerPageSetting={adminRecordsPerPage}
-                          tableTheme={adminTableTheme}
+                          // Passed directly to OrganizationExpensesDashboard component, no longer Admin-defined here
+                          // recordsPerPageSetting={adminRecordsPerPage}
+                          // tableTheme={adminTableTheme}
                       />
               )}
             </div>
@@ -5548,9 +6483,6 @@
         // Expose AdminDashboard globally
         window.App.AdminDashboard = AdminDashboard;
 
-        // Render the App component into the root div
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
-
