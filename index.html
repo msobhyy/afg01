@@ -3057,7 +3057,7 @@
                         <h4 className="text-xl font-semibold text-gray-800 mb-4">{translations.enterAmount}</h4>
                         <input
                             type="text"
-                            value={`SAR ${currentNumpadValue}`}
+                            value={`ريال ${currentNumpadValue}`}
                             readOnly
                             className="w-full p-3 border border-gray-300 rounded-lg text-2xl font-bold text-center mb-4 bg-white calculator-display"
                         />
@@ -3067,8 +3067,8 @@
                                     {num}
                                 </button>
                             ))}
-                            <button onClick={() => handleNumpadInput('0')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button">0</button>
-				{/*<button onClick={() => handleNumpadInput('.')} className="bg-gray-200 hover:bg-gray-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button">.</button>*/}
+                            <button onClick={() => handleNumpadInput('0')} className="bg-cyan-200 hover:bg-cyan-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button">0</button>
+				{/*<button onClick={() => handleNumpadInput('.')} className="bg-cyan-200 hover:bg-cyan-300 p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button">.</button>*/}
                             <button onClick={handleNumpadDelete} className="bg-orange-400 hover:bg-orange-500 text-white p-4 rounded-lg text-xl font-bold transition duration-200 shadow-md calc-button action">DEL</button>
                         </div>
                         <div className="flex justify-between mt-4 space-x-2 calc-bottom-actions">
