@@ -3096,11 +3096,11 @@
               {selectedEmployeeId && (
                 <div className="flex-1 employee-details-section">
                     <h3>{getEmployeeName(selectedEmployeeId)}'s Activity</h3>
-                    <div className="detail-item">
+			{/*<div className="detail-item">
                         <span>{translations.totalEarned} ({translations.today}):</span> <strong id="employee-daily-orders">
                             SAR {payments.filter(p => p.employeeId === selectedEmployeeId && p.timestamp?.toDateString() === new Date().toDateString()).reduce((acc, p) => acc + p.amount, 0).toFixed(2)}
                         </strong>
-                    </div>
+                    </div>*/}
                     <h4 className="text-lg font-semibold text-gray-800 mb-2">{translations.last5PaymentsFor} {getEmployeeName(selectedEmployeeId)}:</h4>
                     <div className="recent-payments-list">
                         <table className="min-w-full">
@@ -6486,3 +6486,4 @@
     </script>
 </body>
 </html>
+
